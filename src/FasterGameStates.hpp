@@ -8,18 +8,23 @@
 #ifndef FASTERGAMESTATES_HPP_
 #define FASTERGAMESTATES_HPP_
 
-#include <JU/core/GameState.hpp>	// GameState
+#include <core/GameState.hpp>	// GameState
+
+// Forward Declarations
+class GLSceneFaster;
 
 class DefaultGameState : public JU::GameState
 {
 	public:
-
 		bool load();
 		bool initialize();
         bool update();
 		bool draw();
 		bool free();
 		bool unload();
+
+	private:
+		GLSceneFaster* p_scene_;
 };
 
 #endif /* FASTERGAMESTATES_HPP_ */

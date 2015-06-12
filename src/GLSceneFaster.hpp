@@ -9,14 +9,16 @@
 #define GLSCENEFASTER_HPP_
 
 // Global includes
-#include <JU/graphics/GLScene.hpp>      		// GLScene
-#include <JU/graphics/Lights.hpp>       		// LightPositionalVector, LightDirectionalVector, LightSpotlightVector
-#include <JU/graphics/ArcBallController.hpp>	// ArcBallController
+#include <graphics/GLScene.hpp>      		// GLScene
+#include <graphics/Lights.hpp>       		// LightPositionalVector, LightDirectionalVector, LightSpotlightVector
+#include <graphics/ArcBallController.hpp>	// ArcBallController
 #include <AntTweakBar.h>						// TwBar
 
 // Local includes
 #include "Bubble.hpp"							// Bubble
 
+namespace JU
+{
 // Forward Declarations
 class GLMesh;
 class GLMeshInstance;
@@ -25,23 +27,24 @@ class Object3D;
 class CameraInterface;
 class CameraThirdPerson;
 class Material;
+}
 
 /*
  * @brief Scene class
  *
  * \todo Maybe unnecessary class
  */
-class GLSceneFaster: public GLScene
+class GLSceneFaster: public JU::GLScene
 {
     public:
         static const int MAX_POS_LIGHTS = 20;
 
         // TYPEDEFS
-        typedef std::map<std::string, Node3D *> 		NodeMap;
-        typedef std::map<std::string, GLMesh*> 			MeshMap;
-        typedef std::map<std::string, GLMeshInstance*> 	MeshInstanceMap;
-        typedef std::map<std::string, Object3D*>		Object3DMap;
-        typedef std::map<std::string, Material*>		MaterialMap;
+        typedef std::map<std::string, JU::Node3D *> 		NodeMap;
+        typedef std::map<std::string, JU::GLMesh*> 			MeshMap;
+        typedef std::map<std::string, JU::GLMeshInstance*> 	MeshInstanceMap;
+        typedef std::map<std::string, JU::Object3D*>		Object3DMap;
+        typedef std::map<std::string, JU::Material*>		MaterialMap;
 
     public:
         GLSceneFaster(int width, int height);
@@ -116,17 +119,17 @@ class GLSceneFaster: public GLScene
         NodeMap::const_iterator main_node_iter;
 
         // CAMERA CONTROLS
-        CameraThirdPerson* tp_camera_;
-        CameraInterface* camera_;
+        JU::CameraThirdPerson* tp_camera_;
+        JU::CameraInterface* camera_;
         bool control_camera_;
-        ArcBallController camera_controller_;
+        JU::ArcBallController camera_controller_;
 
         // LIGHT MANAGEMENT
-        LightManager::LightType light_mode_;			//!< Light Mode
-        JU::int32			    num_lights_;			//!< Number of lights (only one type of light active at one time)
-        LightPositionalVector   lights_positional_;		//!< Vector holding all positional lights
-        LightDirectionalVector  lights_directional_;	//!< Vector holding all directional lights
-        LightSpotlightVector    lights_spotlight_;		//!< Vector holding all spotlights
+        JU::LightManager::LightType light_mode_;			//!< Light Mode
+        JU::int32			    	num_lights_;			//!< Number of lights (only one type of light active at one time)
+        JU::LightPositionalVector   lights_positional_;		//!< Vector holding all positional lights
+        JU::LightDirectionalVector  lights_directional_;	//!< Vector holding all directional lights
+        JU::LightSpotlightVector    lights_spotlight_;		//!< Vector holding all spotlights
 
         // AntTweakBar
         TwBar* 		ptw_bar_;

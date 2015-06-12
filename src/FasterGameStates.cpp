@@ -9,14 +9,14 @@
 #include "FasterGameStates.hpp"
 
 // Global includes
-#include <JU/graphics/GLScene.hpp>
+#include "GLSceneFaster.hpp"
 
 
 bool DefaultGameState::load()
 {
-	GLSceneFaster* p_scene = new GLScene(800, 800);
+	p_scene_ = new GLSceneFaster(800, 800);
 
-	registerGLScene(p_scene);
+	registerGLScene(static_cast<JU::GLScene*>(p_scene_));
 
     return true;
 }
@@ -32,6 +32,14 @@ bool DefaultGameState::initialize()
 
 
 bool DefaultGameState::update()
+{
+
+    return true;
+}
+
+
+
+bool DefaultGameState::draw()
 {
 
     return true;

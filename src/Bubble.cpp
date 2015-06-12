@@ -6,8 +6,8 @@
  */
 
 // Global include
-#include <JU/graphics/Material.hpp>		// Material
-#include <JU/graphics/ShapeHelper2.hpp>         // build Mesh helper funtions
+#include <graphics/Material.hpp>		// Material
+#include <graphics/ShapeHelper2.hpp>         // build Mesh helper funtions
 
 // Local include
 #include "Bubble.hpp"					// Bubble
@@ -93,32 +93,32 @@ void Bubble::setScale(BubbleMember member_id, JU::f32 scale)
 void Bubble::initMeshes(void)
 {
 	// Initialize all materials
-	MaterialManager::init();
+	JU::MaterialManager::init();
 
 	// SPHERE (to be used for maxi an mini)
 	// ------
 	// MESH
-	Mesh2 mesh;
-	ShapeHelper2::buildMesh(mesh, ShapeHelper2::SPHERE, 64, 32);
+	JU::Mesh2 mesh;
+	JU::ShapeHelper2::buildMesh(mesh, JU::ShapeHelper2::SPHERE, 64, 32);
 	mesh.computeTangents();
-	pmesh_ = new GLMesh(mesh);
+	pmesh_ = new JU::GLMesh(mesh);
 	// Load the Mesh into VBO and VAO
 	pmesh_->init();
 
 	// MESH INSTANCES
 	// ------
 	// maxi
-    pmaterial_maxi_ = new Material;
-    if (!MaterialManager::getMaterial("ruby", *pmaterial_maxi_))
+    pmaterial_maxi_ = new JU::Material;
+    if (!JU::MaterialManager::getMaterial("ruby", *pmaterial_maxi_))
         exit(EXIT_FAILURE);
-	pmesh_instance_maxi_ = new GLMeshInstance(pmesh_, maxi_scale_, maxi_scale_, maxi_scale_, pmaterial_maxi_);
+	pmesh_instance_maxi_ = new JU::GLMeshInstance(pmesh_, maxi_scale_, maxi_scale_, maxi_scale_, pmaterial_maxi_);
 	pmesh_instance_maxi_->addColorTexture("pool");
 
 	// mini
-    pmaterial_mini_ = new Material;
-    if (!MaterialManager::getMaterial("pearl", *pmaterial_mini_))
+    pmaterial_mini_ = new JU::Material;
+    if (!JU::MaterialManager::getMaterial("pearl", *pmaterial_mini_))
         exit(EXIT_FAILURE);
-	pmesh_instance_mini_ = new GLMeshInstance(pmesh_, mini_scale_, mini_scale_, mini_scale_, pmaterial_mini_);
+	pmesh_instance_mini_ = new JU::GLMeshInstance(pmesh_, mini_scale_, mini_scale_, mini_scale_, pmaterial_mini_);
 	pmesh_instance_mini_->addColorTexture("pool");
 }
 
@@ -133,7 +133,7 @@ void Bubble::initMeshes(void)
 * @param projection	Camera's projection matrix
 *
 */
-void Bubble::draw(const GLSLProgram &program, const glm::mat4 & model, const glm::mat4 &view, const glm::mat4 &projection) const
+void Bubble::draw(const JU::GLSLProgram &program, const glm::mat4 & model, const glm::mat4 &view, const glm::mat4 &projection) const
 {
 	// Draw "maxi"
 	//glm::mat4 new_model = model * getTransformToParent();

@@ -6,31 +6,31 @@
  */
 
 // Local includes
-#include <JU/graphics/GLMesh.hpp>               // GLMesh
-#include <JU/graphics/GLMeshInstance.hpp>       // GLMeshInstance
-#include <JU/graphics/Node3D.hpp>               // Node3D
-#include <JU/graphics/CameraInterface.hpp>      // CameraInterface
-#include <JU/graphics/CameraFirstPerson.hpp>    // CameraFirstPerson
-#include <JU/graphics/CameraThirdPerson.hpp>    // CameraThirdPerson
-#include <JU/graphics/ShapeHelper2.hpp>         // build Mesh helper funtions
-#include <JU/graphics/TextureManager.hpp>       // loadTexture()
-#include <JU/graphics/Material.hpp>             // MaterialManager
-#include <JU/graphics/DebugGlm.hpp>             // debug::print
-#include <JU/graphics/GLSLProgramExt.hpp>		// GLSLProgramExt::setUniform
+#include <graphics/GLMesh.hpp>               // GLMesh
+#include <graphics/GLMeshInstance.hpp>       // GLMeshInstance
+#include <graphics/Node3D.hpp>               // Node3D
+#include <graphics/CameraInterface.hpp>      // CameraInterface
+#include <graphics/CameraFirstPerson.hpp>    // CameraFirstPerson
+#include <graphics/CameraThirdPerson.hpp>    // CameraThirdPerson
+#include <graphics/ShapeHelper2.hpp>         // build Mesh helper funtions
+#include <graphics/TextureManager.hpp>       // loadTexture()
+#include <graphics/Material.hpp>             // MaterialManager
+#include <graphics/DebugGlm.hpp>             // debug::print
+#include <graphics/GLSLProgramExt.hpp>		 // GLSLProgramExt::setUniform
 
 // Global includes
-#include "../core/Object3D.hpp"     // Object3D
+#include <core/Object3D.hpp>     // Object3D
 #include <glm/gtx/transform.hpp>	// glm::rotate
 #include <math.h>					// M_PI
 #include "GLSceneFaster.hpp"      // GLSceneFaster
 
 
-GLSceneFaster::GLSceneFaster(int width, int height) : GLScene(width, height),
+GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height),
 									 scene_width_(0), scene_height_(0),
 									 deferredFBO_(0), depthBuf_(0), posTex_(0), normTex_(0), colorTex_(0), shininessTex_(0),
 									 pass1Index_(0), pass2Index_(0), record_depth_(true),
 									 tp_camera_(nullptr), camera_(nullptr), control_camera_(true), camera_controller_(width, height, 0.2f),
-									 light_mode_(LightManager::POSITIONAL), num_lights_(1),
+									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(1),
 									 ptw_bar_(nullptr), tw_force_direction_(glm::vec3(1.0f, 0.0f, 0.0f)), tw_force_strength_(5.0f),
 									 tw_scale_maxi_(5.0f), tw_scale_mini_(2.5f)
 {
@@ -122,7 +122,7 @@ void GLSceneFaster::initializeFBO()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuf_, 0);
-        TextureManager::registerTexture("DepthTex", depthBuf_);
+        JU::TextureManager::registerTexture("DepthTex", depthBuf_);
     }
     else
     {
@@ -182,10 +182,10 @@ void GLSceneFaster::initializeFBO()
     }
 
     // Register the texture handles with TextureManager
-    TextureManager::registerTexture("PositionTex", 	posTex_);
-    TextureManager::registerTexture("NormalTex", 	normTex_);
-    TextureManager::registerTexture("ColorTex", 	colorTex_);
-    TextureManager::registerTexture("ShininessTex", shininessTex_);
+    JU::TextureManager::registerTexture("PositionTex", 	posTex_);
+    JU::TextureManager::registerTexture("NormalTex", 	normTex_);
+    JU::TextureManager::registerTexture("ColorTex", 	colorTex_);
+    JU::TextureManager::registerTexture("ShininessTex", shininessTex_);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -194,26 +194,26 @@ void GLSceneFaster::initializeFBO()
 
 void GLSceneFaster::initializeMaterials()
 {
-	Material* pmat;
+	JU::Material* pmat;
 
-    MaterialManager::init();
+    JU::MaterialManager::init();
 
-    pmat = new Material;
-    if (!MaterialManager::getMaterial("ruby", *pmat))
+    pmat = new JU::Material;
+    if (!JU::MaterialManager::getMaterial("ruby", *pmat))
         exit(EXIT_FAILURE);
     material_map_["ruby"] = pmat;
 
-    pmat = new Material;
-    if (!MaterialManager::getMaterial("gray_rubber", *pmat))
+    pmat = new JU::Material;
+    if (!JU::MaterialManager::getMaterial("gray_rubber", *pmat))
         exit(EXIT_FAILURE);
     material_map_["gray_rubber"] = pmat;
 
-    pmat = new Material;
-    if (!MaterialManager::getMaterial("pearl", *pmat))
+    pmat = new JU::Material;
+    if (!JU::MaterialManager::getMaterial("pearl", *pmat))
         exit(EXIT_FAILURE);
     material_map_["pearl"] = pmat;
 
-    pmat = new Material(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+    pmat = new JU::Material(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
     material_map_["white_light"] = pmat;
 }
 
@@ -221,31 +221,31 @@ void GLSceneFaster::initializeMaterials()
 
 void GLSceneFaster::initializeTextures()
 {
-    TextureManager::loadTexture("test",  "texture/test.tga");
-    TextureManager::loadTexture("brick", "texture/brick1.jpg");
-    TextureManager::loadTexture("pool",  "texture/pool.png");
-    TextureManager::loadTexture("light", "texture/light_texture.tga");
+    JU::TextureManager::loadTexture("test",  "texture/test.tga");
+    JU::TextureManager::loadTexture("brick", "texture/brick1.jpg");
+    JU::TextureManager::loadTexture("pool",  "texture/pool.png");
+    JU::TextureManager::loadTexture("light", "texture/light_texture.tga");
 }
 
 
 
 void GLSceneFaster::initializeObjects()
 {
-	GLMesh* 		pmesh;
-	GLMeshInstance* pmesh_instance;
-	Node3D*			pnode;
-	Mesh2 mesh;
+	JU::GLMesh* 		pmesh;
+	JU::GLMeshInstance* pmesh_instance;
+	JU::Node3D*			pnode;
+	JU::Mesh2 			mesh;
 
 	// BUBBLE
 	// ------
 	pbubble_ = new Bubble();
 	pbubble_->init();
 	// NODE: give the sphere a position and a orientation
-	Object3D bubble3d(glm::vec3(0.0f, 10.0f,  0.0f), // Model's position
-				      glm::vec3(1.0f,  0.0f,  0.0f), // Model's X axis
-				      glm::vec3(0.0f,  0.0f, -1.0f), // Model's Y axis
-				      glm::vec3(0.0f,  1.0f,  0.0f));// Model's Z axis
-	pnode = new Node3D(bubble3d, pbubble_, true);
+	JU::Object3D bubble3d(glm::vec3(0.0f, 10.0f,  0.0f), // Model's position
+				      	  glm::vec3(1.0f,  0.0f,  0.0f), // Model's X axis
+						  glm::vec3(0.0f,  0.0f, -1.0f), // Model's Y axis
+						  glm::vec3(0.0f,  1.0f,  0.0f));// Model's Z axis
+	pnode = new JU::Node3D(bubble3d, pbubble_, true);
 	node_map_["bubble"] = pnode;
 
 	main_node_iter = node_map_.find("bubble");
@@ -253,9 +253,9 @@ void GLSceneFaster::initializeObjects()
 	// SPHERE (to be used by lights)
 	// ------
 	// MESH
-	ShapeHelper2::buildMesh(mesh, ShapeHelper2::SPHERE, 64, 32);
+	JU::ShapeHelper2::buildMesh(mesh, JU::ShapeHelper2::SPHERE, 64, 32);
 	mesh.computeTangents();
-	pmesh = new GLMesh(mesh);
+	pmesh = new JU::GLMesh(mesh);
 	// Load the Mesh into VBO and VAO
 	pmesh->init();
 	mesh_map_["sphere_64_32"] = pmesh;
@@ -292,27 +292,27 @@ void GLSceneFaster::initializeObjects()
     // PLANE
     // ------
     // MESH
-    ShapeHelper2::buildMesh(mesh, ShapeHelper2::PLANE);
-    pmesh = new GLMesh(mesh);
+    JU::ShapeHelper2::buildMesh(mesh, JU::ShapeHelper2::PLANE);
+    pmesh = new JU::GLMesh(mesh);
     // Load the Mesh into VBO and VAO
     pmesh->init();
     mesh_map_["plane"] = pmesh;
     // MESH INSTANCE
-    pmesh_instance = new GLMeshInstance(pmesh, 50.0f, 50.0f, 1.0f, material_map_["gray_rubber"]);
+    pmesh_instance = new JU::GLMeshInstance(pmesh, 50.0f, 50.0f, 1.0f, material_map_["gray_rubber"]);
     pmesh_instance->addColorTexture("brick");
     mesh_instance_map_["plane_green"];
     // NODE
     // Give the plane a position and a orientation
-    Object3D plane(glm::vec3(0.0f, 0.0f, 0.0f), // Model's position
+    JU::Object3D plane(glm::vec3(0.0f, 0.0f, 0.0f), // Model's position
                    glm::vec3(1.0f, 0.0f, 0.0f), // Model's X axis
                    glm::vec3(0.0f, 0.0f,-1.0f), // Model's Y axis
                    glm::vec3(0.0f, 1.0f, 0.0f));// Model's Z axis
-    pnode = new Node3D(plane, pmesh_instance, true);
+    pnode = new JU::Node3D(plane, pmesh_instance, true);
 	node_map_["plane"] = pnode;
 
 	// QUAD: For deferred shading's second pass (screen filling quad)
 	// --------------------------------------------------------------
-	pmesh_instance = new GLMeshInstance(mesh_map_["plane"], 2.0f, 2.0f, 1.0f);
+	pmesh_instance = new JU::GLMeshInstance(mesh_map_["plane"], 2.0f, 2.0f, 1.0f);
     mesh_instance_map_["screen_quad"] = pmesh_instance;
 }
 
@@ -320,10 +320,10 @@ void GLSceneFaster::initializeObjects()
 
 void GLSceneFaster::initializeCameras()
 {
-    tp_camera_ = new CameraThirdPerson(CameraIntrinsic(90.f, scene_width_/(JU::f32)scene_height_, 0.5f, 1000.f),
-    								   static_cast<Object3D>(*main_node_iter->second),
-    								   10.0f, 0.0f, M_PI / 4.0f);
-    camera_ = dynamic_cast<CameraInterface *>(tp_camera_);
+    tp_camera_ = new JU::CameraThirdPerson(JU::CameraIntrinsic(90.f, scene_width_/(JU::f32)scene_height_, 0.5f, 1000.f),
+    								   	   static_cast<JU::Object3D>(*main_node_iter->second),
+										   10.0f, 0.0f, M_PI / 4.0f);
+    camera_ = dynamic_cast<JU::CameraInterface *>(tp_camera_);
 }
 
 
@@ -333,15 +333,15 @@ void GLSceneFaster::initializeLights()
 {
 	switch (light_mode_)
 	{
-		case LightManager::POSITIONAL:
+		case JU::LightManager::POSITIONAL:
 			initializePositionalLights();
 			break;
 
-		case LightManager::DIRECTIONAL:
+		case JU::LightManager::DIRECTIONAL:
 			initializeDirectionalLights();
 			break;
 
-		case LightManager::SPOTLIGHT:
+		case JU::LightManager::SPOTLIGHT:
 			initializeSpotlightLights();
 	}
 }
@@ -355,13 +355,13 @@ void GLSceneFaster::initializePositionalLights()
     glm::vec3 light_intensity (channel_intensity);
 
     // GLMeshInstance
-    GLMeshInstance* pmesh_instance = new GLMeshInstance(mesh_map_["sphere_64_32"],		// mesh
-    													0.5f, 0.5f, 0.5f,				// scale
-														material_map_["white_light"]);	// material
+    JU::GLMeshInstance* pmesh_instance = new JU::GLMeshInstance(mesh_map_["sphere_64_32"],		// mesh
+    															0.5f, 0.5f, 0.5f,				// scale
+																material_map_["white_light"]);	// material
     //pmesh_instance->addColorTexture("light");
     mesh_instance_map_["light_sphere"] = pmesh_instance;
 
-    lights_positional_.resize(num_lights_, LightPositional(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
+    lights_positional_.resize(num_lights_, JU::LightPositional(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
 
     glm::vec3 light_ring_center (0.0f, 20.0f, 0.0f);
 	JU::f32 angle_delta = 2.0f * M_PI / num_lights_;
@@ -371,16 +371,16 @@ void GLSceneFaster::initializePositionalLights()
     	JU::f32 z = radius * cosf(angle);
     	JU::f32 x = radius * sinf(angle);
     	glm::vec3 light_pos (x, 20.f, z);
-        Object3D light_frame(light_pos,
-                           glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
-    					   glm::vec3(0.0f, 1.0f,  0.0f), // Model's Y axis
-    					   glm::vec3(0.0f, 0.0f,  1.0f));// Model's Z axis
+    	JU::Object3D light_frame(light_pos,
+                           	   	 glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
+							     glm::vec3(0.0f, 1.0f,  0.0f), // Model's Y axis
+							     glm::vec3(0.0f, 0.0f,  1.0f));// Model's Z axis
 
-        Node3D *pnode = new Node3D(light_frame, pmesh_instance, true);
+    	JU::Node3D *pnode = new JU::Node3D(light_frame, pmesh_instance, true);
 
         node_map_[std::string("light_pos") + std::to_string(index)] = pnode;
 
-        lights_positional_[index] = (LightPositional(light_pos, light_intensity));
+        lights_positional_[index] = (JU::LightPositional(light_pos, light_intensity));
     }
 }
 
@@ -400,13 +400,13 @@ void GLSceneFaster::initializeSpotlightLights()
     JU::f32 cutoff = M_PI / 4.0f;
 
     // GLMeshInstance
-    GLMeshInstance* pmesh_instance = new GLMeshInstance(mesh_map_["sphere_64_32"],		// mesh
-    													0.5f, 0.5f, 0.5f,				// scale
-														material_map_["white_light"]);	// material
+    JU::GLMeshInstance* pmesh_instance = new JU::GLMeshInstance(mesh_map_["sphere_64_32"],		// mesh
+    															0.5f, 0.5f, 0.5f,				// scale
+																material_map_["white_light"]);	// material
     //pmesh_instance->addColorTexture("light");
     mesh_instance_map_["light_sphere"] = pmesh_instance;
 
-    lights_spotlight_.resize(num_lights_, LightSpotlight(glm::vec3(0.0f, 0.0f, 0.0f),
+    lights_spotlight_.resize(num_lights_, JU::LightSpotlight(glm::vec3(0.0f, 0.0f, 0.0f),
     													 glm::vec3(0.0f, 0.0f, 0.0f),
 														 glm::vec3(0.0f, 0.0f, 0.0f),
 														 0.0f));
@@ -419,17 +419,17 @@ void GLSceneFaster::initializeSpotlightLights()
     	JU::f32 z = radius * cosf(angle);
     	JU::f32 x = radius * sinf(angle);
     	glm::vec3 light_pos (x, 20.f, z);
-        Object3D light_frame(light_pos,
-                           glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
-    					   glm::vec3(0.0f, 1.0f,  0.0f), // Model's Y axis
-    					   glm::vec3(0.0f, 0.0f,  1.0f));// Model's Z axis
+    	JU::Object3D light_frame(light_pos,
+                           	     glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
+								 glm::vec3(0.0f, 1.0f,  0.0f), // Model's Y axis
+								 glm::vec3(0.0f, 0.0f,  1.0f));// Model's Z axis
         glm::vec3 light_dir = glm::normalize(light_pos - main_node_iter->second->getPosition());
 
-        Node3D *pnode = new Node3D(light_frame, pmesh_instance, true);
+        JU::Node3D* pnode = new JU::Node3D(light_frame, pmesh_instance, true);
 
         node_map_[std::string("light_pos") + std::to_string(index)] = pnode;
 
-        lights_spotlight_[index] = (LightSpotlight(light_pos, light_dir, light_intensity, cutoff));
+        lights_spotlight_[index] = (JU::LightSpotlight(light_pos, light_dir, light_intensity, cutoff));
     }
 }
 
@@ -463,15 +463,15 @@ void GLSceneFaster::loadLights(void) const
 {
 	switch (light_mode_)
 	{
-		case LightManager::POSITIONAL:
+		case JU::LightManager::POSITIONAL:
 			loadPositionalLights();
 			break;
 
-		case LightManager::DIRECTIONAL:
+		case JU::LightManager::DIRECTIONAL:
 			loadDirectionalLights();
 			break;
 
-		case LightManager::SPOTLIGHT:
+		case JU::LightManager::SPOTLIGHT:
 			loadSpotlightLights();
 	}
 }
@@ -483,18 +483,18 @@ void GLSceneFaster::loadPositionalLights(void) const
     // WARNING: The shader expects the light position in eye coordinates
 	glm::mat4 view_matrix = tp_camera_->getViewMatrix();
 
-	LightPositionalVector eye_lights;
+	JU::LightPositionalVector eye_lights;
 	eye_lights.reserve(lights_positional_.size());
     JU::uint32 index = 0;
-    for (LightPositionalVector::const_iterator light = lights_positional_.begin(); light != lights_positional_.end(); ++light)
+    for (JU::LightPositionalVector::const_iterator light = lights_positional_.begin(); light != lights_positional_.end(); ++light)
     {
     	glm::vec4 eye_position = view_matrix * glm::vec4(light->position_, 1.0f);
-    	eye_lights.push_back(LightPositional(glm::vec3(eye_position), light->intensity_));
+    	eye_lights.push_back(JU::LightPositional(glm::vec3(eye_position), light->intensity_));
 
         ++index;
     }
 
-    GLSLProgramExt::setUniform(current_program_iter_->second, eye_lights);
+    JU::GLSLProgramExt::setUniform(current_program_iter_->second, eye_lights);
 
 }
 
@@ -511,24 +511,24 @@ void GLSceneFaster::loadSpotlightLights(void) const
     // WARNING: The shader expects the light position in eye coordinates
 	glm::mat4 view_matrix = tp_camera_->getViewMatrix();
 
-	LightSpotlightVector eye_lights;
+	JU::LightSpotlightVector eye_lights;
 	eye_lights.reserve(lights_spotlight_.size());
     JU::uint32 index = 0;
-    for (LightSpotlightVector::const_iterator light = lights_spotlight_.begin(); light != lights_spotlight_.end(); ++light)
+    for (JU::LightSpotlightVector::const_iterator light = lights_spotlight_.begin(); light != lights_spotlight_.end(); ++light)
     {
     	glm::vec4 eye_position = view_matrix * glm::vec4(light->position_, 1.0f);
     	glm::vec3 target_world_position = main_node_iter->second->getPosition();
     	glm::vec4 target_eye_position = view_matrix * glm::vec4(target_world_position, 1.0f);
     	glm::vec4 eye_direction (glm::normalize(eye_position - target_eye_position));
-    	eye_lights.push_back(LightSpotlight(glm::vec3(eye_position),
-    										glm::vec3(eye_direction),
-											light->intensity_,
-											light->cutoff_));
+    	eye_lights.push_back(JU::LightSpotlight(glm::vec3(eye_position),
+    											glm::vec3(eye_direction),
+												light->intensity_,
+												light->cutoff_));
 
         ++index;
     }
 
-    GLSLProgramExt::setUniform(current_program_iter_->second, eye_lights);
+    JU::GLSLProgramExt::setUniform(current_program_iter_->second, eye_lights);
 
 }
 
@@ -545,7 +545,7 @@ void GLSceneFaster::updateCamera(JU::f32 time)
     {
         // Convert the axis from the camera to the world coordinate system
         axis = glm::vec3(tp_camera_->getTransformToParent() * glm::vec4(axis, 0.0f));
-        tp_camera_->update(static_cast<const Object3D&>(*main_node_iter->second), radius_delta, angle, axis);
+        tp_camera_->update(static_cast<const JU::Object3D&>(*main_node_iter->second), radius_delta, angle, axis);
     }
     else
     {
@@ -561,15 +561,15 @@ void GLSceneFaster::updateLights(JU::f32 time)
 {
 	switch (light_mode_)
 	{
-		case LightManager::POSITIONAL:
+		case JU::LightManager::POSITIONAL:
 			updatePositionalLights(time);
 			break;
 
-		case LightManager::DIRECTIONAL:
+		case JU::LightManager::DIRECTIONAL:
 			updateDirectionalLights(time);
 			break;
 
-		case LightManager::SPOTLIGHT:
+		case JU::LightManager::SPOTLIGHT:
 			updateSpotlightLights(time);
 	}
 }
@@ -584,7 +584,7 @@ void GLSceneFaster::updatePositionalLights(JU::f32 time)
 
     glm::mat4 rotation = glm::rotate(glm::mat4(1.f), angle_speed * time, glm::vec3(0.0f, 1.0f, 0.0f));
     JU::uint32 index = 0;
-    for (LightPositionalVector::iterator light = lights_positional_.begin(); light != lights_positional_.end(); ++light)
+    for (JU::LightPositionalVector::iterator light = lights_positional_.begin(); light != lights_positional_.end(); ++light)
     {
         glm::vec4 position = rotation * glm::vec4(light->position_, 0.0f);
         light->position_.x = position.x;
@@ -613,7 +613,7 @@ void GLSceneFaster::updateSpotlightLights(JU::f32 time)
 
     glm::mat4 rotation = glm::rotate(glm::mat4(1.f), angle_speed * time, glm::vec3(0.0f, 1.0f, 0.0f));
     JU::uint32 index = 0;
-    for (LightSpotlightVector::iterator light = lights_spotlight_.begin(); light != lights_spotlight_.end(); ++light)
+    for (JU::LightSpotlightVector::iterator light = lights_spotlight_.begin(); light != lights_spotlight_.end(); ++light)
     {
         glm::vec4 position = rotation * glm::vec4(light->position_, 0.0f);
         light->position_.x = position.x;
@@ -712,7 +712,7 @@ void GLSceneFaster::renderPass1()
         (iter->second)->draw(current_program_iter_->second, M, V, P);
     }
 
-    TextureManager::unbindAllTextures();
+    JU::TextureManager::unbindAllTextures();
 
     // Wait for the buffer to be filled
     glFinish();
@@ -741,12 +741,12 @@ void GLSceneFaster::renderPass2()
     loadLights();
 
     // Load G-Buffer
-    TextureManager::bindTexture(current_program_iter_->second, "PositionTex", "PositionTex");
-    TextureManager::bindTexture(current_program_iter_->second, "NormalTex",   "NormalTex");
-    TextureManager::bindTexture(current_program_iter_->second, "ColorTex", 	  "ColorTex");
-    TextureManager::bindTexture(current_program_iter_->second, "ShininessTex","ShininessTex");
+    JU::TextureManager::bindTexture(current_program_iter_->second, "PositionTex", "PositionTex");
+    JU::TextureManager::bindTexture(current_program_iter_->second, "NormalTex",   "NormalTex");
+    JU::TextureManager::bindTexture(current_program_iter_->second, "ColorTex", 	  "ColorTex");
+    JU::TextureManager::bindTexture(current_program_iter_->second, "ShininessTex","ShininessTex");
     if (record_depth_)
-    	TextureManager::bindTexture(current_program_iter_->second, "DepthTex", 	  "DepthTex");
+    	JU::TextureManager::bindTexture(current_program_iter_->second, "DepthTex", 	  "DepthTex");
 
     // Model Matrix
     glm::mat4 M(1.0f);
@@ -757,7 +757,7 @@ void GLSceneFaster::renderPass2()
 
     mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
 
-    TextureManager::unbindAllTextures();
+    JU::TextureManager::unbindAllTextures();
 }
 
 
@@ -786,25 +786,25 @@ void GLSceneFaster::renderDebug()
     JU::uint32 height = 0;
     // Position
     glViewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
-    TextureManager::bindTexture(current_program_iter_->second, "PositionTex", "tex_image");
+    JU::TextureManager::bindTexture(current_program_iter_->second, "PositionTex", "tex_image");
     mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
     height += mini_height;
 
     // Normal
     glViewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
-    TextureManager::bindTexture(current_program_iter_->second, "NormalTex",   "tex_image");
+    JU::TextureManager::bindTexture(current_program_iter_->second, "NormalTex",   "tex_image");
     mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
     height += mini_height;
 
     // Color
     glViewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
-    TextureManager::bindTexture(current_program_iter_->second, "ColorTex", 	  "tex_image");
+    JU::TextureManager::bindTexture(current_program_iter_->second, "ColorTex", 	  "tex_image");
     mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
     height += mini_height;
 
     // Shininess
     glViewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
-    TextureManager::bindTexture(current_program_iter_->second, "ShininessTex","tex_image");
+    JU::TextureManager::bindTexture(current_program_iter_->second, "ShininessTex","tex_image");
     mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
     height += mini_height;
 
@@ -812,12 +812,11 @@ void GLSceneFaster::renderDebug()
     if (record_depth_)
     {
         glViewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
-    	TextureManager::bindTexture(current_program_iter_->second, "DepthTex", "tex_image");
+        JU::TextureManager::bindTexture(current_program_iter_->second, "DepthTex", "tex_image");
     	mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
     }
 
-
-    TextureManager::unbindAllTextures();
+    JU::TextureManager::unbindAllTextures();
 }
 
 
@@ -839,7 +838,7 @@ void GLSceneFaster::resize(int width, int height)
 {
 	// Actual viewport will be smaller to accommodate textures
 	// in the right pane of the interface
-    GLScene::resize(width, height);
+	JU::GLScene::resize(width, height);
     computeSceneSize(width, height);
     glViewport(0, 0, (GLsizei) scene_width_, (GLsizei) scene_height_);
     camera_->setAspectRatio(static_cast<JU::f32>(scene_width_)/scene_height_);
@@ -990,7 +989,7 @@ void GLSceneFaster::clear(void)
     material_map_.clear();
 
     // Node Map
-    std::map<std::string, Node3D *>::const_iterator iter;
+    std::map<std::string, JU::Node3D *>::const_iterator iter;
     for (iter = node_map_.begin(); iter != node_map_.end(); ++iter)
     {
         delete iter->second;

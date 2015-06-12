@@ -8,7 +8,7 @@
     #include <JU/FrameRateTracker.hpp>  // FrameRateTracker
 #endif
 
-#include <JU/core/GameManager.hpp>		// GameManager
+#include <core/GameManager.hpp>		// GameManager
 
 #include "GLSceneFaster.hpp"    // GLSceneBounce
 #include "IOHelper.hpp"			// JU::KeyID
@@ -31,7 +31,7 @@ namespace
 	int winID;
 	GLsizei WIDTH  = 800 * 1.2;
 	GLsizei HEIGHT = 600;
-	GLScene *scene;
+	JU::GLScene *scene;
 	#ifndef WIN32
 		FrameRateTracker frame_rate;
 		Timer timer;
