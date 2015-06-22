@@ -46,7 +46,7 @@ namespace
 //This is an opportunity to call glViewport or glScissor to keep up with the change in size.
 static void reshape (int w, int h)
 {
-    glViewport(0, 0, (GLsizei) w, (GLsizei) h);
+    gl::Viewport(0, 0, (GLsizei) w, (GLsizei) h);
     scene->resize(w, h);
 }
 
@@ -150,7 +150,7 @@ static void display(SDL_Window *window)
 	scene->update(time_diff);
     scene->render();
 
-    SDL_GL_SwapWindow(window);
+    SDL_GLSwapWindow(window);
 
     // Print stats
 	frame_rate.update(time);

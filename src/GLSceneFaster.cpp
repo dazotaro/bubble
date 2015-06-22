@@ -52,13 +52,13 @@ GLSceneFaster::~GLSceneFaster()
 */
 void GLSceneFaster::init(void)
 {
-    glClearColor(0.0,0.0,0.0,1.0);
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LEQUAL);
-    glDepthRange(0.0f, 1.0f);
-    glEnable(GL_CULL_FACE); // enables face culling
-    glCullFace(GL_BACK); // tells OpenGL to cull back faces (the sane default setting)
+    gl::ClearColor(0.0,0.0,0.0,1.0);
+    gl::Enable(gl::DEPTH_TEST);
+    gl::DepthMask(gl::TRUE_);
+    gl::DepthFunc(gl::LEQUAL);
+    gl::DepthRange(0.0f, 1.0f);
+    gl::Enable(gl::CULL_FACE); // enables face culling
+    gl::CullFace(gl::BACK); // tells OpenGL to cull back faces (the sane default setting)
 
     initializePrograms();
     initializeFBO();
@@ -97,8 +97,8 @@ void GLSceneFaster::initializePrograms()
 
     // Set up the subroutine indexes
     GLuint programHandle = current_program_iter_ ->second.getHandle();
-    pass1Index_ = glGetSubroutineIndex( programHandle, GL_FRAGMENT_SHADER, "pass1");
-    pass2Index_ = glGetSubroutineIndex( programHandle, GL_FRAGMENT_SHADER, "pass2");
+    pass1Index_ = gl::GetSubroutineIndex( programHandle, gl::FRAGMENT_SHADER, "pass1");
+    pass2Index_ = gl::GetSubroutineIndex( programHandle, gl::FRAGMENT_SHADER, "pass2");
 }
 
 
@@ -109,73 +109,73 @@ void GLSceneFaster::initializePrograms()
 void GLSceneFaster::initializeFBO()
 {
     // Create and bind the FBO
-    glGenFramebuffers(1, &deferredFBO_);
-    glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO_);
+    gl::GenFramebuffers(1, &deferredFBO_);
+    gl::BindFramebuffer(gl::FRAMEBUFFER, deferredFBO_);
 
     // The DEPTH buffer
     if (record_depth_)
     {
         // if want to access it in the shader
-        glGenTextures(1, &depthBuf_);
-        glBindTexture(GL_TEXTURE_2D, depthBuf_);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, scene_width_, scene_height_, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBuf_, 0);
+        gl::GenTextures(1, &depthBuf_);
+        gl::BindTexture(gl::TEXTURE_2D, depthBuf_);
+        gl::TexImage2D(gl::TEXTURE_2D, 0, gl::DEPTH_COMPONENT24, scene_width_, scene_height_, 0, gl::DEPTH_COMPONENT, gl::FLOAT, 0);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
+        gl::FramebufferTexture2D(gl::FRAMEBUFFER, gl::DEPTH_ATTACHMENT, gl::TEXTURE_2D, depthBuf_, 0);
         JU::TextureManager::registerTexture("DepthTex", depthBuf_);
     }
     else
     {
     	// if we do not need to explicitly access it
-		glGenRenderbuffers(1, &depthBuf_);
-		glBindRenderbuffer(GL_RENDERBUFFER, depthBuf_);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, scene_width_, scene_height_);
-	    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuf_);
+		gl::GenRenderbuffers(1, &depthBuf_);
+		gl::BindRenderbuffer(gl::RENDERBUFFER, depthBuf_);
+		gl::RenderbufferStorage(gl::RENDERBUFFER, gl::DEPTH_COMPONENT, scene_width_, scene_height_);
+	    gl::FramebufferRenderbuffer(gl::FRAMEBUFFER, gl::DEPTH_ATTACHMENT, gl::RENDERBUFFER, depthBuf_);
     }
 
     // The position buffer
-    glGenTextures(1, &posTex_);
-    glBindTexture(GL_TEXTURE_2D, posTex_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, scene_width_, scene_height_, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    gl::GenTextures(1, &posTex_);
+    gl::BindTexture(gl::TEXTURE_2D, posTex_);
+    gl::TexImage2D(gl::TEXTURE_2D, 0, gl::RGB32F, scene_width_, scene_height_, 0, gl::RGB, gl::UNSIGNED_BYTE, NULL);
+    gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
+    gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
 
     // The normal buffer
-    glGenTextures(1, &normTex_);
-    glBindTexture(GL_TEXTURE_2D, normTex_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, scene_width_, scene_height_, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    gl::GenTextures(1, &normTex_);
+    gl::BindTexture(gl::TEXTURE_2D, normTex_);
+    gl::TexImage2D(gl::TEXTURE_2D, 0, gl::RGB32F, scene_width_, scene_height_, 0, gl::RGB, gl::UNSIGNED_BYTE, NULL);
+    gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
+    gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
 
     // The color buffer
-    glGenTextures(1, &colorTex_);
-    glBindTexture(GL_TEXTURE_2D, colorTex_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, scene_width_, scene_height_, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    gl::GenTextures(1, &colorTex_);
+    gl::BindTexture(gl::TEXTURE_2D, colorTex_);
+    gl::TexImage2D(gl::TEXTURE_2D, 0, gl::RGB, scene_width_, scene_height_, 0, gl::RGB, gl::UNSIGNED_BYTE, NULL);
+    gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
+    gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
 
     // The shininess buffer
-    glGenTextures(1, &shininessTex_);
-    glBindTexture(GL_TEXTURE_2D, shininessTex_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, scene_width_, scene_height_, 0,  GL_RED, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    gl::GenTextures(1, &shininessTex_);
+    gl::BindTexture(gl::TEXTURE_2D, shininessTex_);
+    gl::TexImage2D(gl::TEXTURE_2D, 0, gl::R32F, scene_width_, scene_height_, 0,  gl::RED, gl::FLOAT, NULL);
+    gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST);
+    gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
 
     // Attach the images to the frame buffer
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, posTex_, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normTex_, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, colorTex_, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, shininessTex_, 0);
+    gl::FramebufferTexture2D(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT0, gl::TEXTURE_2D, posTex_, 0);
+    gl::FramebufferTexture2D(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT1, gl::TEXTURE_2D, normTex_, 0);
+    gl::FramebufferTexture2D(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT2, gl::TEXTURE_2D, colorTex_, 0);
+    gl::FramebufferTexture2D(gl::FRAMEBUFFER, gl::COLOR_ATTACHMENT3, gl::TEXTURE_2D, shininessTex_, 0);
 
-    GLenum drawBuffers[] = {GL_NONE,
-    						GL_COLOR_ATTACHMENT0,
-							GL_COLOR_ATTACHMENT1,
-							GL_COLOR_ATTACHMENT2,
-							GL_COLOR_ATTACHMENT3};
-    glDrawBuffers(5, drawBuffers);
+    GLenum drawBuffers[] = {gl::NONE,
+    						gl::COLOR_ATTACHMENT0,
+							gl::COLOR_ATTACHMENT1,
+							gl::COLOR_ATTACHMENT2,
+							gl::COLOR_ATTACHMENT3};
+    gl::DrawBuffers(5, drawBuffers);
 
     // Check that our frame buffer is complete
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    if(gl::CheckFramebufferStatus(gl::FRAMEBUFFER) != gl::FRAMEBUFFER_COMPLETE)
     {
     	std::printf("Incomplete FrameBuffer Status. Bailing out!!!");
     	exit(EXIT_FAILURE);
@@ -187,7 +187,7 @@ void GLSceneFaster::initializeFBO()
     JU::TextureManager::registerTexture("ColorTex", 	colorTex_);
     JU::TextureManager::registerTexture("ShininessTex", shininessTex_);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    gl::BindFramebuffer(gl::FRAMEBUFFER, 0);
 }
 
 
@@ -683,12 +683,12 @@ void GLSceneFaster::render(void)
 */
 void GLSceneFaster::renderPass1()
 {
-    glViewport(0, 0, (GLsizei) scene_width_, (GLsizei) scene_height_);
+    gl::Viewport(0, 0, (GLsizei) scene_width_, (GLsizei) scene_height_);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, deferredFBO_);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_DEPTH_TEST);
+    gl::BindFramebuffer(gl::FRAMEBUFFER, deferredFBO_);
+    gl::ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+    gl::Enable(gl::DEPTH_TEST);
 
     current_program_iter_ = glsl_program_map_.find("deferred");
     current_program_iter_->second.use();
@@ -698,7 +698,7 @@ void GLSceneFaster::renderPass1()
     // for which subroutine uniforms is not part of the program object. Instead, it is
     // part of the context state, similar to how texture bindings and uniform buffer
     // bindings are part of context state.
-    glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &pass1Index_);
+    gl::UniformSubroutinesuiv(gl::FRAGMENT_SHADER, 1, &pass1Index_);
 
     // Model Matrix
     static glm::mat4 M(1.0f);
@@ -715,7 +715,7 @@ void GLSceneFaster::renderPass1()
     JU::TextureManager::unbindAllTextures();
 
     // Wait for the buffer to be filled
-    glFinish();
+    gl::Finish();
 }
 
 
@@ -728,14 +728,14 @@ void GLSceneFaster::renderPass1()
 void GLSceneFaster::renderPass2()
 {
     // Revert to default frame buffer
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    gl::BindFramebuffer(gl::FRAMEBUFFER, 0);
 
-    //pass1Index_ = glGetSubroutineIndex( current_program_iter_->second.getHandle(), GL_FRAGMENT_SHADER, "pass2");
-    glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &pass2Index_);
+    //pass1Index_ = glGetSubroutineIndex( current_program_iter_->second.getHandle(), gl::FRAGMENT_SHADER, "pass2");
+    gl::UniformSubroutinesuiv(gl::FRAGMENT_SHADER, 1, &pass2Index_);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDisable(GL_DEPTH_TEST);
+    gl::ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+    gl::Disable(gl::DEPTH_TEST);
 
     // LOAD LIGHTS
     loadLights();
@@ -785,25 +785,25 @@ void GLSceneFaster::renderDebug()
     JU::uint32 mini_height = scene_height_ / 5;
     JU::uint32 height = 0;
     // Position
-    glViewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
+    gl::Viewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
     JU::TextureManager::bindTexture(current_program_iter_->second, "PositionTex", "tex_image");
     mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
     height += mini_height;
 
     // Normal
-    glViewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
+    gl::Viewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
     JU::TextureManager::bindTexture(current_program_iter_->second, "NormalTex",   "tex_image");
     mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
     height += mini_height;
 
     // Color
-    glViewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
+    gl::Viewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
     JU::TextureManager::bindTexture(current_program_iter_->second, "ColorTex", 	  "tex_image");
     mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
     height += mini_height;
 
     // Shininess
-    glViewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
+    gl::Viewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
     JU::TextureManager::bindTexture(current_program_iter_->second, "ShininessTex","tex_image");
     mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
     height += mini_height;
@@ -811,7 +811,7 @@ void GLSceneFaster::renderDebug()
     // Depth
     if (record_depth_)
     {
-        glViewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
+        gl::Viewport(scene_width_, height, (GLsizei) mini_width, (GLsizei) mini_height);
         JU::TextureManager::bindTexture(current_program_iter_->second, "DepthTex", "tex_image");
     	mesh_instance_map_["screen_quad"]->draw(current_program_iter_->second, M, V, P);
     }
@@ -840,7 +840,7 @@ void GLSceneFaster::resize(int width, int height)
 	// in the right pane of the interface
 	JU::GLScene::resize(width, height);
     computeSceneSize(width, height);
-    glViewport(0, 0, (GLsizei) scene_width_, (GLsizei) scene_height_);
+    gl::Viewport(0, 0, (GLsizei) scene_width_, (GLsizei) scene_height_);
     camera_->setAspectRatio(static_cast<JU::f32>(scene_width_)/scene_height_);
     camera_controller_.windowResize(scene_width_, scene_height_);
 
@@ -951,15 +951,15 @@ void GLSceneFaster::reload()
 void GLSceneFaster::clear(void)
 {
 	// FBOs and Textures
-	glDeleteFramebuffers (1, &deferredFBO_);
+	gl::DeleteFramebuffers (1, &deferredFBO_);
 	if (record_depth_)
-		glDeleteTextures(1, &depthBuf_);
+		gl::DeleteTextures(1, &depthBuf_);
 	else
-		glDeleteRenderbuffers(1, &depthBuf_);
-	glDeleteTextures     (1, &posTex_);
-	glDeleteTextures	 (1, &normTex_);
-	glDeleteTextures	 (1, &colorTex_);
-	glDeleteTextures	 (1, &shininessTex_);
+		gl::DeleteRenderbuffers(1, &depthBuf_);
+	gl::DeleteTextures(1, &posTex_);
+	gl::DeleteTextures(1, &normTex_);
+	gl::DeleteTextures(1, &colorTex_);
+	gl::DeleteTextures(1, &shininessTex_);
 
 	// Camera
     delete tp_camera_;

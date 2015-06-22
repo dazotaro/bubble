@@ -1,6 +1,6 @@
 
 // Local includes
-#include "gl_core_4_2.h"                // glLoadGen generated header
+#include "gl_core_4_2.hpp"                // glLoadGen generated header
 #include "GLSceneFaster.hpp"            // GLSceneBounce
 
 // Global includes
@@ -165,20 +165,20 @@ int main(int argc, char** argv)
     glutInitWindowPosition(0,0);
     winID = glutCreateWindow("OpenGL - First window demo");
 
-    printf("GL Vendor: %s\n", glGetString(GL_VENDOR));
-    printf("GL Renderer: %s\n", glGetString(GL_RENDERER));
-    printf("GL version: %s\n", glGetString(GL_VERSION));
-    printf("GLSL version: %s\n", (char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
+    printf("GL Vendor: %s\n", glGetString(gl::VENDOR));
+    printf("GL Renderer: %s\n", glGetString(gl::RENDERER));
+    printf("GL version: %s\n", glGetString(gl::VERSION));
+    printf("GLSL version: %s\n", (char *) glGetString(gl::SHADING_LANGUAGE_VERSION));
 
     // How many active textures do we have access to?
     GLint data;
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &data);
+    glGetIntegerv(gl::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &data);
     printf("Max Number of Combined Texture Units: %i\n", data);
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &data);
+    glGetIntegerv(gl::MAX_TEXTURE_IMAGE_UNITS, &data);
     printf("Max Number of Fragment Texture Units: %i\n", data);
-    glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &data);
+    glGetIntegerv(gl::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &data);
     printf("Max Number of Vertex Texture Units: %i\n", data);
-    glGetIntegerv(GL_MAX_FRAGMENT_IMAGE_UNIFORMS, &data);
+    glGetIntegerv(gl::MAX_FRAGMENT_IMAGE_UNIFORMS, &data);
     printf("Max Number of Fragment Image Variables: %i\n", data);
 
     // Do all the initialization
