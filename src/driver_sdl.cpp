@@ -22,34 +22,15 @@
 
 
 
-// Local (static) variable definitions
-// ----------------------------------
-namespace
-{
-	SDL_Window* mainwindow = nullptr;
-	bool quit = false;
-	int winID;
-	GLsizei WIDTH  = 800 * 1.2;
-	GLsizei HEIGHT = 600;
-	JU::GLScene *scene;
-	#ifndef WIN32
-		FrameRateTracker frame_rate;
-		Timer timer;
-	#endif
-    JU::InputManager* input_manager;
-}
-
-
-
-
 //Called whenever the window is resized. The new window size is given, in pixels.
 //This is an opportunity to call glViewport or glScissor to keep up with the change in size.
+/*
 static void reshape (int w, int h)
 {
     gl::Viewport(0, 0, (GLsizei) w, (GLsizei) h);
     scene->resize(w, h);
 }
-
+*/
 
 
 /*
