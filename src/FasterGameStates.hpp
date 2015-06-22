@@ -22,9 +22,6 @@ class DefaultGameState : public JU::GameState
 		bool draw();
 		bool free();
 		bool unload();
-
-	private:
-		GLSceneFaster* p_scene_;
 };
 
 #endif /* FASTERGAMESTATES_HPP_ */

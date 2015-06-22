@@ -33,6 +33,7 @@ bool DefaultGameState::initialize()
 
 bool DefaultGameState::update()
 {
+	p_scene_->update(1000);
 
     return true;
 }
@@ -41,6 +42,7 @@ bool DefaultGameState::update()
 
 bool DefaultGameState::draw()
 {
+	p_scene_->render();
 
     return true;
 }
@@ -57,6 +59,7 @@ bool DefaultGameState::free()
 
 bool DefaultGameState::unload()
 {
+	p_scene_->clear();
 
     return true;
 }
