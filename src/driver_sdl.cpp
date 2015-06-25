@@ -8,10 +8,14 @@
     #include <JU/FrameRateTracker.hpp>  // FrameRateTracker
 #endif
 
-#include <core/GameManager.hpp>		// GameManager
+#include <core/GameManager.hpp>		// JU::GameManager
+#include <core/Singleton.hpp>		// JU::Singleton
+#include <core/Registry.hpp>		// JU::Registry
 
-#include "GLSceneFaster.hpp"    // GLSceneBounce
-#include "IOHelper.hpp"			// JU::KeyID
+// Local includes
+#include "GLSceneFaster.hpp"    		// GLSceneBounce
+#include "IOHelper.hpp"					// JU::KeyID
+#include "BubbleGameStateFactory.hpp"	// BubbleGameStateFactory
 
 
 #ifdef _WIN32
@@ -177,6 +181,12 @@ static void cleanup(void)
 //regardless of the platform.
 int main(int argc, char** argv)
 {
+	// Register Factories
+	BubbleGameStateFactory state_factory;
+	JU::Registry* registry = JU::Singleton<JU::Registry>::getInstance();
+	registry->setObjectFactory(&state_factory);
+
+	// Create GameManager
 	JU::GameManager game_manager;
 
 	game_manager.initialize();
