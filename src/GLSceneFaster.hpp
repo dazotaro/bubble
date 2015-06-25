@@ -57,10 +57,10 @@ class GLSceneFaster: public JU::GLScene
         void mouseClick(int button, int state, int x, int y);
         void mouseMotion(int x, int y);
         void resize(int width, int height);
+        void clear(void);
 
     private:
         void reload();
-        void clear(void);
 
         void computeSceneSize(JU::uint32 width, JU::uint32 height);
 
