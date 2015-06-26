@@ -8,14 +8,15 @@
     #include <JU/FrameRateTracker.hpp>  // FrameRateTracker
 #endif
 
-#include <core/GameManager.hpp>		// JU::GameManager
-#include <core/Singleton.hpp>		// JU::Singleton
-#include <core/Registry.hpp>		// JU::Registry
+#include <core/GameManager.hpp>			// JU::GameManager
+#include <core/Singleton.hpp>			// JU::Singleton
+#include <core/Registry.hpp>			// JU::Registry
 
 // Local includes
 #include "GLSceneFaster.hpp"    		// GLSceneBounce
 #include "IOHelper.hpp"					// JU::KeyID
 #include "BubbleGameStateFactory.hpp"	// BubbleGameStateFactory
+#include "BubbleGameStates.hpp"			// BubbleGameState
 
 
 #ifdef _WIN32
@@ -186,10 +187,15 @@ int main(int argc, char** argv)
 	JU::Registry* registry = JU::Singleton<JU::Registry>::getInstance();
 	registry->setObjectFactory(&state_factory);
 
-	// Create GameManager
+	// GameManager: CREATE and INITIALIZE
 	JU::GameManager game_manager;
-
 	game_manager.initialize();
+
+	// ADD STATES
+	JU::GameStateManager& state_manager = game_manager.getStateManager();
+	state_manager.addState("BubbleGameState", new BubbleGameState);
+	state_manager.changeState("BubbleGameState");
+
 	game_manager.loop();
 	game_manager.exit();
 
