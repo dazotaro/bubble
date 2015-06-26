@@ -75,15 +75,15 @@ void GLSceneFaster::init(void)
 
 void GLSceneFaster::initializePrograms()
 {
-	glsl_program_map_["debug"]  = compileAndLinkShader("shaders/deferred.vs", "shaders/image_texture.fs");
+	glsl_program_map_["debug"]  = compileAndLinkShader("data/shaders/deferred.vs", "data/shaders/image_texture.fs");
 
 	if (record_depth_)
 	{
-		glsl_program_map_["deferred"]  = compileAndLinkShader("shaders/deferred.vs", "shaders/deferred_depth.fs");
+		glsl_program_map_["deferred"]  = compileAndLinkShader("data/shaders/deferred.vs", "data/shaders/deferred_depth.fs");
 	}
 	else
 	{
-		glsl_program_map_["deferred"]  = compileAndLinkShader("shaders/deferred.vs", "shaders/deferred.fs");
+		glsl_program_map_["deferred"]  = compileAndLinkShader("data/shaders/deferred.vs", "data/shaders/deferred.fs");
 	}
 
     current_program_iter_ = glsl_program_map_.find("deferred");
@@ -221,10 +221,10 @@ void GLSceneFaster::initializeMaterials()
 
 void GLSceneFaster::initializeTextures()
 {
-    JU::TextureManager::loadTexture("test",  "texture/test.tga");
-    JU::TextureManager::loadTexture("brick", "texture/brick1.jpg");
-    JU::TextureManager::loadTexture("pool",  "texture/pool.png");
-    JU::TextureManager::loadTexture("light", "texture/light_texture.tga");
+    JU::TextureManager::loadTexture("test",  "data/textures/test.tga");
+    JU::TextureManager::loadTexture("brick", "data/textures/brick1.jpg");
+    JU::TextureManager::loadTexture("pool",  "data/textures/pool.png");
+    JU::TextureManager::loadTexture("light", "data/textures/light_texture.tga");
 }
 
 
