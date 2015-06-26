@@ -26,12 +26,14 @@ class BubbleGameState : public JU::GameStateInterface
 	public:
 		// GameStateInterface
 		// ------------------
-		bool load();
-		bool initialize();
+		bool enter();
+		bool synchronize();
+		bool commonEnterSynchronize();
         bool update();
 		bool draw();
-		bool free();
-		bool unload();
+		bool exit();
+		bool suspend();
+		bool commonExitSuspend();
 
 	private:
 		JU::GLScene* p_scene_;

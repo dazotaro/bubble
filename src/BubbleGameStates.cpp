@@ -22,21 +22,25 @@ BubbleGameState::~BubbleGameState()
 }
 
 
-bool BubbleGameState::load()
+bool BubbleGameState::enter()
 {
 	p_scene_ = new GLSceneFaster(800, 800);
-
-    return true;
-}
-
-
-bool BubbleGameState::initialize()
-{
 	p_scene_->init();
 
     return true;
 }
 
+
+bool BubbleGameState::synchronize()
+{
+    return true;
+}
+
+
+bool BubbleGameState::commonEnterSynchronize()
+{
+    return true;
+}
 
 
 bool BubbleGameState::update()
@@ -47,7 +51,6 @@ bool BubbleGameState::update()
 }
 
 
-
 bool BubbleGameState::draw()
 {
 	p_scene_->render();
@@ -56,18 +59,22 @@ bool BubbleGameState::draw()
 }
 
 
-
-bool BubbleGameState::free()
-{
-
-    return true;
-}
-
-
-
-bool BubbleGameState::unload()
+bool BubbleGameState::exit()
 {
 	p_scene_->clear();
 
+	return true;
+}
+
+
+bool BubbleGameState::suspend()
+{
     return true;
 }
+
+
+bool BubbleGameState::commonExitSuspend()
+{
+    return true;
+}
+
