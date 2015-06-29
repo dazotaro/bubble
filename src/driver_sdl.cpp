@@ -156,8 +156,8 @@ static void display(SDL_Window *window)
 /*
 static void init(void)
 {
-    input_manager = new JU::InputManager;
-    input_manager->initialize();
+    event_manager = new JU::EventManager;
+    event_manager->initialize();
 
     //scene = new GLSceneParticles(WIDTH, HEIGHT);
     scene = new GLSceneFaster(WIDTH, HEIGHT);
