@@ -9,6 +9,7 @@
 #define GLSCENEFASTER_HPP_
 
 // Global includes
+#include <core/SDLEventManager.hpp>			// JU::SDLEventHandler
 #include <graphics/GLScene.hpp>      		// GLScene
 #include <graphics/Lights.hpp>       		// LightPositionalVector, LightDirectionalVector, LightSpotlightVector
 #include <graphics/ArcBallController.hpp>	// ArcBallController
@@ -34,7 +35,7 @@ class Material;
  *
  * \todo Maybe unnecessary class
  */
-class GLSceneFaster: public JU::GLScene
+class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
 {
     public:
         static const int MAX_POS_LIGHTS = 20;
@@ -58,6 +59,10 @@ class GLSceneFaster: public JU::GLScene
         void mouseMotion(int x, int y);
         void resize(int width, int height);
         void clear(void);
+
+    public:
+        // SDLEventHandler Interface
+		void handleSDLEvent(const SDL_Event* event);
 
     private:
         void reload();

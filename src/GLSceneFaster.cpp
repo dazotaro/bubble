@@ -6,6 +6,9 @@
  */
 
 // Local includes
+#include "GLSceneFaster.hpp"      // GLSceneFaster
+
+// Global includes
 #include <graphics/GLMesh.hpp>               // GLMesh
 #include <graphics/GLMeshInstance.hpp>       // GLMeshInstance
 #include <graphics/Node3D.hpp>               // Node3D
@@ -17,12 +20,10 @@
 #include <graphics/Material.hpp>             // MaterialManager
 #include <graphics/DebugGlm.hpp>             // debug::print
 #include <graphics/GLSLProgramExt.hpp>		 // GLSLProgramExt::setUniform
-
-// Global includes
-#include <core/Object3D.hpp>     // Object3D
-#include <glm/gtx/transform.hpp>	// glm::rotate
-#include <math.h>					// M_PI
-#include "GLSceneFaster.hpp"      // GLSceneFaster
+#include <core/Object3D.hpp>     			 // Object3D
+#include <core/Singleton.hpp>				 // JU::Singleton
+#include <glm/gtx/transform.hpp>			 // glm::rotate
+#include <math.h>							 // M_PI
 
 
 GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height),
@@ -67,6 +68,10 @@ void GLSceneFaster::init(void)
     initializeObjects();
     initializeCameras();
     initializeLights();
+
+	JU::SDLEventManager* SDL_event_manager = JU::Singleton<JU::SDLEventManager>::getInstance();
+	SDL_event_manager->attachEventHandler(SDL_WINDOWEVENT, "SceneResize", this);
+
 
     initAntTweakBar();
 }
@@ -827,6 +832,22 @@ void GLSceneFaster::computeSceneSize(JU::uint32 width, JU::uint32 height)
     scene_width_  = width * 0.8f;
     scene_height_ = height;
 }
+
+
+/**
+* @brief Handle the event to resize the scene
+*
+* @param width  Width of the window
+* @param height Height of the window
+*/
+void GLSceneFaster::handleSDLEvent(const SDL_Event* event)
+{
+	if (event->window.event == SDL_WINDOWEVENT_RESIZED)
+	{
+		resize(event->window.data1, event->window.data2);
+	}
+}
+
 
 /**
 * @brief Resize the scene

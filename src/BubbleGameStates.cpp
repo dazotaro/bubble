@@ -10,7 +10,7 @@
 #include "GLSceneFaster.hpp"		// GLSceneFaster
 
 
-BubbleGameState::BubbleGameState() : JU::GameStateInterface("BubbleGameState")
+BubbleGameState::BubbleGameState() : JU::GameStateInterface("BubbleGameState"), p_scene_(nullptr)
 {
 
 }
