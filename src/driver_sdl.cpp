@@ -14,7 +14,6 @@
 
 // Local includes
 #include "GLSceneFaster.hpp"    		// GLSceneBounce
-#include "IOHelper.hpp"					// JU::KeyID
 #include "BubbleGameStateFactory.hpp"	// BubbleGameStateFactory
 #include "BubbleGameStates.hpp"			// BubbleGameState
 
