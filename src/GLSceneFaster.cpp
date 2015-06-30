@@ -6,7 +6,8 @@
  */
 
 // Local includes
-#include "GLSceneFaster.hpp"      // GLSceneFaster
+#include "GLSceneFaster.hpp"      	// GLSceneFaster
+#include "IOHelper.hpp"				// SDL to IO helper functions
 
 // Global includes
 #include <graphics/GLMesh.hpp>               // GLMesh
@@ -22,6 +23,7 @@
 #include <graphics/GLSLProgramExt.hpp>		 // GLSLProgramExt::setUniform
 #include <core/Object3D.hpp>     			 // Object3D
 #include <core/Singleton.hpp>				 // JU::Singleton
+#include <core/SystemLog.hpp>				 // JU::SystemLog
 #include <glm/gtx/transform.hpp>			 // glm::rotate
 #include <math.h>							 // M_PI
 
@@ -70,8 +72,11 @@ void GLSceneFaster::init(void)
     initializeLights();
 
 	JU::SDLEventManager* SDL_event_manager = JU::Singleton<JU::SDLEventManager>::getInstance();
-	SDL_event_manager->attachEventHandler(SDL_WINDOWEVENT, "SceneResize", this);
-
+	SDL_event_manager->attachEventHandler(SDL_WINDOWEVENT, 		"SceneResize", 		this);
+	SDL_event_manager->attachEventHandler(SDL_MOUSEMOTION, 		"SceneMouseMotion", this);
+	SDL_event_manager->attachEventHandler(SDL_MOUSEBUTTONDOWN, 	"SceneButtonDown", 	this);
+	SDL_event_manager->attachEventHandler(SDL_MOUSEBUTTONUP, 	"SceneButtonUp", 	this);
+	SDL_event_manager->attachEventHandler(SDL_MOUSEWHEEL, 		"SceneMouseWheel", 	this);
 
     initAntTweakBar();
 }
@@ -842,9 +847,52 @@ void GLSceneFaster::computeSceneSize(JU::uint32 width, JU::uint32 height)
 */
 void GLSceneFaster::handleSDLEvent(const SDL_Event* event)
 {
-	if (event->window.event == SDL_WINDOWEVENT_RESIZED)
-	{
-		resize(event->window.data1, event->window.data2);
+
+    //static bool handled = TwEventSDL(event, SDL_MAJOR_VERSION, SDL_MINOR_VERSION);
+	bool handled = false;
+    if (!handled)
+    {
+    	switch (event->type)
+		{
+			case SDL_WINDOWEVENT_RESIZED:
+				resize(event->window.data1, event->window.data2);
+				break;
+
+			case SDL_MOUSEMOTION:
+				{
+					//Get mouse position
+					int x, y;
+					SDL_GetMouseState (&x, &y);
+					mouseMotion(x, y);
+				}
+				break;
+
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				{
+					//Get mouse position
+					int x, y;
+					SDL_GetMouseState (&x, &y);
+					mouseClick(JU::IO::SDL2ToMouseButtonID(event->button.button),
+							   JU::IO::SDL2ToMouseButtonState(event->button.state),
+							   x, y);
+				}
+				break;
+
+			case SDL_MOUSEWHEEL:
+				// Scrolling up
+				if (event->wheel.y > 0)
+					mouseClick(JU::IO::BUTTON_MIDDLE_SCROLL_UP, JU::IO::BUTTON_STATE_UNKNOWN, 0, 0);
+				else if (event->wheel.y < 0)
+					mouseClick(JU::IO::BUTTON_MIDDLE_SCROLL_DOWN, JU::IO::BUTTON_STATE_UNKNOWN, 0, 0);
+				break;
+
+			default:
+				JU::SystemLog::logMessage("SDLEvent", "Unhandled SDL2 event\n");
+				break;
+
+
+		}
 	}
 }
 
