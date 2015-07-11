@@ -888,7 +888,9 @@ void GLSceneFaster::handleSDLEvent(const SDL_Event* event)
 				break;
 
 			default:
-				JU::SystemLog::logMessage("SDLEvent", "Unhandled SDL2 event\n");
+				char buffer[100];
+				std::sprintf(buffer, "%s:Event type (%x) has no handler assigned\n", __PRETTY_FUNCTION__, event->type);
+				JU::SystemLog::logMessage(FUNCTION_NAME, buffer, false);
 				break;
 
 
