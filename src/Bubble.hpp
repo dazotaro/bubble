@@ -54,6 +54,9 @@ class Bubble : public JU::DrawInterface
 		JU::Material*		pmaterial_mini_;		//!< Mini's material
 		JU::f32				maxi_scale_;			//!< Maxi's scale respect to the world
 		JU::f32				mini_scale_;			//!< Mini's scale respect to the world
+		// Physics
+		glm::vec3 			force_dir_;				//!< Direction of total force acting on Bubble
+		JU::f32				force_mag_;				//!< Magnitude of force acting on Bubble
 };
 
 #endif /* BUBBLE_HPP_ */

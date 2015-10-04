@@ -18,7 +18,8 @@
 *
 */
 Bubble::Bubble(void) : pmesh_(nullptr), pmesh_instance_maxi_(nullptr), pmesh_instance_mini_(nullptr),
-						pmaterial_maxi_(nullptr), pmaterial_mini_(nullptr), maxi_scale_(1.0f), mini_scale_(0.5f)
+						pmaterial_maxi_(nullptr), pmaterial_mini_(nullptr), maxi_scale_(1.0f), mini_scale_(0.5f),
+						force_dir_(glm::vec3(0.0f, 0.0f, 0.0f)), force_mag_(0.0f)
 {
 	mini_obj_.setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
 }
@@ -65,6 +66,8 @@ void Bubble::update(const glm::vec3& direction, const JU::f32 distance)
 	// - Mini's orientation is not considered
 
 	// Maxi is at the origin (in it's own coordinate system)
+
+	// If using AntTweakBard
 	mini_obj_.setPosition(direction * distance);
 }
 
