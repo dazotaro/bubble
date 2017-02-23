@@ -113,7 +113,7 @@ void pass2()
     vec3 pos  = vec3( texture(PositionTex, TexCoord));
     vec3 norm = vec3( texture(NormalTex, TexCoord));
     vec3 color = vec3( texture(ColorTex, TexCoord));
-    float shininess = texture(ShininessTex, TexCoord));
+    float shininess = vec3(texture(ShininessTex, TexCoord)).r;
     
     FragColor = vec4(0.0f);
     
