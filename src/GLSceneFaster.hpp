@@ -52,7 +52,7 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
         virtual ~GLSceneFaster();
 
         void init(void);
-        void update(JU::f32 time);
+        void update(JU::uint32 time);
         void render(void);
         void keyboard(unsigned char key, int x, int y);
         void mouseClick(int button, int state, int x, int y);
@@ -81,14 +81,14 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
         void initializeSpotlightLights();
         void initAntTweakBar();
 
-        void updateCamera(JU::f32 time);
+        void updateCamera(JU::uint32 time);
 
-        void updateLights(JU::f32 time);
-        void updatePositionalLights(JU::f32 time);
-        void updateDirectionalLights(JU::f32 time);
-        void updateSpotlightLights(JU::f32 time);
+        void updateLights(JU::uint32 time);
+        void updatePositionalLights(JU::uint32 time);
+        void updateDirectionalLights(JU::uint32 time);
+        void updateSpotlightLights(JU::uint32 time);
 
-        void updateBubble(JU::f32 time);
+        void updateBubble(JU::uint32 time);
 
         void loadLights(void) const;
         void loadPositionalLights(void) const;

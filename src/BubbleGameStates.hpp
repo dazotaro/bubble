@@ -29,7 +29,7 @@ class BubbleGameState : public JU::GameStateInterface
 		bool enter();
 		bool synchronize();
 		bool commonEnterSynchronize();
-        bool update();
+        bool update(JU::uint32 time);
 		bool draw();
 		bool exit();
 		bool suspend();

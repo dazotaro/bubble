@@ -43,9 +43,9 @@ bool BubbleGameState::commonEnterSynchronize()
 }
 
 
-bool BubbleGameState::update()
+bool BubbleGameState::update(JU::uint32 time)
 {
-	p_scene_->update(1000);
+	p_scene_->update(time);
 
     return true;
 }

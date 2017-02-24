@@ -34,7 +34,7 @@ GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height)
 									 deferredFBO_(0), depthBuf_(0), posTex_(0), normTex_(0), colorTex_(0), shininessTex_(0),
 									 pass1Index_(0), pass2Index_(0), record_depth_(true),
 									 tp_camera_(nullptr), camera_(nullptr), control_camera_(true), camera_controller_(width, height, 0.2f),
-									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(1),
+									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(2),
 									 ptw_bar_(nullptr), tw_force_direction_(glm::vec3(1.0f, 0.0f, 0.0f)), tw_force_strength_(5.0f),
 									 tw_scale_maxi_(5.0f), tw_scale_mini_(2.5f)
 {
@@ -547,7 +547,7 @@ void GLSceneFaster::loadSpotlightLights(void) const
 
 
 
-void GLSceneFaster::updateCamera(JU::f32 time)
+void GLSceneFaster::updateCamera(JU::uint32 time)
 {
     JU::f32 radius_delta, angle;
     glm::vec3 axis;
@@ -570,7 +570,7 @@ void GLSceneFaster::updateCamera(JU::f32 time)
 
 
 
-void GLSceneFaster::updateLights(JU::f32 time)
+void GLSceneFaster::updateLights(JU::uint32 time)
 {
 	switch (light_mode_)
 	{
@@ -589,11 +589,11 @@ void GLSceneFaster::updateLights(JU::f32 time)
 
 
 
-void GLSceneFaster::updatePositionalLights(JU::f32 time)
+void GLSceneFaster::updatePositionalLights(JU::uint32 time)
 {
 	// LIGHTS: update position
-    //static const JU::f32 angle_speed = (2.0 * M_PI * 0.1f) * 0.001f ; // 10 seconds to complete a revolution
-	static const JU::f32 angle_speed = 0.0f;
+    static const JU::f32 angle_speed = (2.0 * M_PI * 0.25f) * 0.001f ; // 2000 milliseconds to complete a revolution
+    std::printf("Angle since last update %f\n", angle_speed * time);
 
     glm::mat4 rotation = glm::rotate(glm::mat4(1.f), angle_speed * time, glm::vec3(0.0f, 1.0f, 0.0f));
     JU::uint32 index = 0;
@@ -612,13 +612,13 @@ void GLSceneFaster::updatePositionalLights(JU::f32 time)
 
 
 
-void GLSceneFaster::updateDirectionalLights(JU::f32 time)
+void GLSceneFaster::updateDirectionalLights(JU::uint32 time)
 {
 }
 
 
 
-void GLSceneFaster::updateSpotlightLights(JU::f32 time)
+void GLSceneFaster::updateSpotlightLights(JU::uint32 time)
 {
 	// LIGHTS: update position
     //static const JU::f32 angle_speed = (2.0 * M_PI * 0.1f) * 0.001f ; // 10 seconds to complete a revolution
@@ -646,7 +646,7 @@ void GLSceneFaster::updateSpotlightLights(JU::f32 time)
 *
 * @param time Time elapsed since the last update (in milliseconds)
 */
-void GLSceneFaster::updateBubble(JU::f32 time)
+void GLSceneFaster::updateBubble(JU::uint32 time)
 {
 	pbubble_->setScale(Bubble::MAXI, tw_scale_maxi_);
 	pbubble_->setScale(Bubble::MINI, tw_scale_mini_);
@@ -660,7 +660,7 @@ void GLSceneFaster::updateBubble(JU::f32 time)
 *
 * @param time Time elapsed since the last update (in milliseconds)
 */
-void GLSceneFaster::update(JU::f32 time)
+void GLSceneFaster::update(JU::uint32 time)
 {
 	updateCamera(time);
 	updateLights(time);
