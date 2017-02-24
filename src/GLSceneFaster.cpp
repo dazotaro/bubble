@@ -265,47 +265,18 @@ void GLSceneFaster::initializeObjects()
 	// MESH
 	JU::ShapeHelper2::buildMesh(mesh, JU::ShapeHelper2::SPHERE, 64, 32);
 	mesh.computeTangents();
-	pmesh = new JU::GLMesh(mesh);
+	pmesh = new JU::GLMesh();
 	// Load the Mesh into VBO and VAO
-	pmesh->init();
+	pmesh->init(mesh);
 	mesh_map_["sphere_64_32"] = pmesh;
-
-	/*
-	// TORUS
-	// ------
-	// MESH
-	ShapeHelper2::buildMesh(mesh, ShapeHelper2::TORUS, 64, 32);
-	mesh.computeTangents();
-	pmesh = new GLMesh(mesh);
-	// Load the Mesh into VBO and VAO
-	pmesh->init();
-	mesh_map_["torus_64_32"] = pmesh;
-	*/
-
-	// MESH INSTANCE
-	/*
-	pmesh_instance = new GLMeshInstance(pmesh, 5.0f, 5.0f, 5.0f, material_map_["ruby"]);
-	pmesh_instance->addColorTexture("pool");
-	mesh_instance_map_["sphere_ruby"] = pmesh_instance;
-	// NODE
-	// Give the sphere a position and a orientation
-	Object3D sphere(glm::vec3(0.0f, 10.0f,  0.0f), // Model's position
-				   glm::vec3(1.0f,  0.0f,  0.0f), // Model's X axis
-				   glm::vec3(0.0f,  0.0f, -1.0f), // Model's Y axis
-				   glm::vec3(0.0f,  1.0f,  0.0f));// Model's Z axis
-	pnode = new Node3D(sphere, pmesh_instance, true);
-	node_map_["sphere"] = pnode;
-
-	main_node_iter = node_map_.find("sphere");
-	*/
 
     // PLANE
     // ------
     // MESH
     JU::ShapeHelper2::buildMesh(mesh, JU::ShapeHelper2::PLANE);
-    pmesh = new JU::GLMesh(mesh);
+    pmesh = new JU::GLMesh();
     // Load the Mesh into VBO and VAO
-    pmesh->init();
+    pmesh->init(mesh);
     mesh_map_["plane"] = pmesh;
     // MESH INSTANCE
     pmesh_instance = new JU::GLMeshInstance(pmesh, 50.0f, 50.0f, 1.0f, material_map_["gray_rubber"]);

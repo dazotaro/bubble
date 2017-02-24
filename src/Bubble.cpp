@@ -104,9 +104,9 @@ void Bubble::initMeshes(void)
 	JU::Mesh2 mesh;
 	JU::ShapeHelper2::buildMesh(mesh, JU::ShapeHelper2::SPHERE, 64, 32);
 	mesh.computeTangents();
-	pmesh_ = new JU::GLMesh(mesh);
+	pmesh_ = new JU::GLMesh();
 	// Load the Mesh into VBO and VAO
-	pmesh_->init();
+	pmesh_->init(mesh);
 
 	// MESH INSTANCES
 	// ------
