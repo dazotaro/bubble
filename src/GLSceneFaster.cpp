@@ -21,6 +21,7 @@
 #include <graphics/Material.hpp>             // MaterialManager
 #include <graphics/DebugGlm.hpp>             // debug::print
 #include <graphics/GLSLProgramExt.hpp>		 // GLSLProgramExt::setUniform
+#include <graphics/MeshImporter.hpp>         // MeshImporter (Assimp)
 #include <core/Object3D.hpp>     			 // Object3D
 #include <core/Singleton.hpp>				 // JU::Singleton
 #include <core/SystemLog.hpp>				 // JU::SystemLog
@@ -214,6 +215,11 @@ void GLSceneFaster::initializeMaterials()
     material_map_["ruby"] = pmat;
 
     pmat = new JU::Material;
+    if (!JU::MaterialManager::getMaterial("gold", *pmat))
+        exit(EXIT_FAILURE);
+    material_map_["gold"] = pmat;
+
+    pmat = new JU::Material;
     if (!JU::MaterialManager::getMaterial("gray_rubber", *pmat))
         exit(EXIT_FAILURE);
     material_map_["gray_rubber"] = pmat;
@@ -290,6 +296,32 @@ void GLSceneFaster::initializeObjects()
                    glm::vec3(0.0f, 1.0f, 0.0f));// Model's Z axis
     pnode = new JU::Node3D(plane, pmesh_instance, true);
 	node_map_["plane"] = pnode;
+
+	// ASSIMP MESH
+	// -----------
+    const char* filename = "./models/monkey.obj";
+    if (!JU::MeshImporter::import(filename, mesh))
+    {
+        std::printf("Could not load %s\n", filename);
+        exit(EXIT_FAILURE);
+    }
+    //mesh.computeTangents();
+    pmesh = new JU::GLMesh();
+    pmesh->init(mesh);
+    mesh_map_["assimp"] = pmesh;
+    // MESH INSTANCE
+    pmesh_instance = new JU::GLMeshInstance(pmesh, 1.0f, 1.0f, 1.0f, material_map_["gold"]);
+    pmesh_instance->addColorTexture("assimp");
+    mesh_instance_map_["assimp"];
+    // NODE: give the sphere a position and a orientation
+    JU::Object3D assimp3d(glm::vec3(0.0f,  15.0f,  0.0f), // Model's position
+                          glm::vec3(1.0f,  0.0f,  0.0f), // Model's X axis
+                          glm::vec3(0.0f,  1.0f,  0.0f), // Model's Y axis
+                          glm::vec3(0.0f,  0.0f,  1.0f));// Model's Z axis
+    pnode = new JU::Node3D(assimp3d, pmesh_instance, true);
+    node_map_["assimp"] = pnode;
+
+
 
 	// QUAD: For deferred shading's second pass (screen filling quad)
 	// --------------------------------------------------------------
