@@ -62,6 +62,7 @@ bool BubbleGameState::draw()
 bool BubbleGameState::exit()
 {
 	p_scene_->clear();
+	delete p_scene_;
 
 	return true;
 }
