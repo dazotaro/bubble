@@ -337,7 +337,7 @@ void GLSceneFaster::initializePositionalLights()
     // GLMeshInstance
     JU::GLMeshInstance* pmesh_instance = new JU::GLMeshInstance(mesh_map_["sphere_64_32"],		// mesh
     															0.5f, 0.5f, 0.5f,				// scale
-																JU::MaterialManager::getMaterial("white_rubber"));	// material
+																JU::MaterialManager::getMaterial("white_plastic"));	// material
     //pmesh_instance->addColorTexture("light");
     mesh_instance_map_["light_sphere"] = pmesh_instance;
 
@@ -382,7 +382,7 @@ void GLSceneFaster::initializeSpotlightLights()
     // GLMeshInstance
     JU::GLMeshInstance* pmesh_instance = new JU::GLMeshInstance(mesh_map_["sphere_64_32"],		// mesh
     															0.5f, 0.5f, 0.5f,				// scale
-    															JU::MaterialManager::getMaterial("white_rubber"));  // material
+    															JU::MaterialManager::getMaterial("yellow_plastic"));  // material
     //pmesh_instance->addColorTexture("light");
     mesh_instance_map_["light_sphere"] = pmesh_instance;
 
