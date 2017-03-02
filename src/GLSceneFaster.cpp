@@ -560,7 +560,6 @@ void GLSceneFaster::updatePositionalLights(JU::uint32 time)
 {
 	// LIGHTS: update position
     static const JU::f32 angle_speed = (2.0 * M_PI * 0.25f) * 0.001f ; // 2000 milliseconds to complete a revolution
-    std::printf("Angle since last update %f\n", angle_speed * time);
 
     glm::mat4 rotation = glm::rotate(glm::mat4(1.f), angle_speed * time, glm::vec3(0.0f, 1.0f, 0.0f));
     JU::uint32 index = 0;
@@ -824,7 +823,8 @@ void GLSceneFaster::handleSDLEvent(const SDL_Event* event)
     {
     	switch (event->type)
 		{
-			case SDL_WINDOWEVENT_RESIZED:
+			case SDL_WINDOWEVENT:
+			    if (event->window.event == SDL_WINDOWEVENT_RESIZED)
 				resize(event->window.data1, event->window.data2);
 				break;
 
