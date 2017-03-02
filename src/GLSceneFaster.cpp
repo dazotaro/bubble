@@ -66,7 +66,6 @@ void GLSceneFaster::init(void)
 
     initializePrograms();
     initializeFBO();
-    initializeMaterials();
     initializeTextures();
     initializeObjects();
     initializeCameras();
@@ -203,38 +202,6 @@ void GLSceneFaster::initializeFBO()
 
 
 
-void GLSceneFaster::initializeMaterials()
-{
-	JU::Material* pmat;
-
-    JU::MaterialManager::init();
-
-    pmat = new JU::Material;
-    if (!JU::MaterialManager::getMaterial("ruby", *pmat))
-        exit(EXIT_FAILURE);
-    material_map_["ruby"] = pmat;
-
-    pmat = new JU::Material;
-    if (!JU::MaterialManager::getMaterial("gold", *pmat))
-        exit(EXIT_FAILURE);
-    material_map_["gold"] = pmat;
-
-    pmat = new JU::Material;
-    if (!JU::MaterialManager::getMaterial("gray_rubber", *pmat))
-        exit(EXIT_FAILURE);
-    material_map_["gray_rubber"] = pmat;
-
-    pmat = new JU::Material;
-    if (!JU::MaterialManager::getMaterial("pearl", *pmat))
-        exit(EXIT_FAILURE);
-    material_map_["pearl"] = pmat;
-
-    pmat = new JU::Material(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-    material_map_["white_light"] = pmat;
-}
-
-
-
 void GLSceneFaster::initializeTextures()
 {
     JU::TextureManager::loadTexture("test",  "data/textures/test.tga");
@@ -285,7 +252,7 @@ void GLSceneFaster::initializeObjects()
     pmesh->init(mesh);
     mesh_map_["plane"] = pmesh;
     // MESH INSTANCE
-    pmesh_instance = new JU::GLMeshInstance(pmesh, 50.0f, 50.0f, 1.0f, material_map_["gray_rubber"]);
+    pmesh_instance = new JU::GLMeshInstance(pmesh, 50.0f, 50.0f, 1.0f, JU::MaterialManager::getMaterial("gray_rubber"));
     pmesh_instance->addColorTexture("brick");
     mesh_instance_map_["plane_green"];
     // NODE
@@ -310,7 +277,7 @@ void GLSceneFaster::initializeObjects()
     pmesh->init(mesh);
     mesh_map_["assimp"] = pmesh;
     // MESH INSTANCE
-    pmesh_instance = new JU::GLMeshInstance(pmesh, 1.0f, 1.0f, 1.0f, material_map_["gold"]);
+    pmesh_instance = new JU::GLMeshInstance(pmesh, 1.0f, 1.0f, 1.0f, JU::MaterialManager::getMaterial("gold"));
     pmesh_instance->addColorTexture("assimp");
     mesh_instance_map_["assimp"];
     // NODE: give the sphere a position and a orientation
@@ -370,7 +337,7 @@ void GLSceneFaster::initializePositionalLights()
     // GLMeshInstance
     JU::GLMeshInstance* pmesh_instance = new JU::GLMeshInstance(mesh_map_["sphere_64_32"],		// mesh
     															0.5f, 0.5f, 0.5f,				// scale
-																material_map_["white_light"]);	// material
+																JU::MaterialManager::getMaterial("white_rubber"));	// material
     //pmesh_instance->addColorTexture("light");
     mesh_instance_map_["light_sphere"] = pmesh_instance;
 
@@ -415,7 +382,7 @@ void GLSceneFaster::initializeSpotlightLights()
     // GLMeshInstance
     JU::GLMeshInstance* pmesh_instance = new JU::GLMeshInstance(mesh_map_["sphere_64_32"],		// mesh
     															0.5f, 0.5f, 0.5f,				// scale
-																material_map_["white_light"]);	// material
+    															JU::MaterialManager::getMaterial("white_rubber"));  // material
     //pmesh_instance->addColorTexture("light");
     mesh_instance_map_["light_sphere"] = pmesh_instance;
 
@@ -1054,13 +1021,6 @@ void GLSceneFaster::clear(void)
     	delete iter->second;
     }
     mesh_instance_map_.clear();
-
-    // Material map
-    for (MaterialMap::const_iterator iter = material_map_.begin(); iter != material_map_.end(); ++iter)
-    {
-    	delete iter->second;
-    }
-    material_map_.clear();
 
     // Node Map
     std::map<std::string, JU::Node3D *>::const_iterator iter;

@@ -50,8 +50,6 @@ class Bubble : public JU::DrawInterface
 		JU::GLMesh*			pmesh_;					//!< Mesh to be drawn
 		JU::GLMeshInstance* pmesh_instance_maxi_;	//!< Mini's instance of *pmesh_
 		JU::GLMeshInstance* pmesh_instance_mini_;	//!< Maxi's instance of *pmesh_
-		JU::Material*		pmaterial_maxi_;		//!< Maxi's material
-		JU::Material*		pmaterial_mini_;		//!< Mini's material
 		JU::f32				maxi_scale_;			//!< Maxi's scale respect to the world
 		JU::f32				mini_scale_;			//!< Mini's scale respect to the world
 		// Physics

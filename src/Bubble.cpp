@@ -18,7 +18,7 @@
 *
 */
 Bubble::Bubble(void) : pmesh_(nullptr), pmesh_instance_maxi_(nullptr), pmesh_instance_mini_(nullptr),
-						pmaterial_maxi_(nullptr), pmaterial_mini_(nullptr), maxi_scale_(1.0f), mini_scale_(0.5f),
+						maxi_scale_(1.0f), mini_scale_(0.5f),
 						force_dir_(glm::vec3(0.0f, 0.0f, 0.0f)), force_mag_(0.0f)
 {
 	mini_obj_.setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
@@ -35,8 +35,6 @@ Bubble::~Bubble()
 	delete pmesh_;
 	delete pmesh_instance_maxi_;
 	delete pmesh_instance_mini_;
-	delete pmaterial_maxi_;
-	delete pmaterial_mini_;
 }
 
 
@@ -95,9 +93,6 @@ void Bubble::setScale(BubbleMember member_id, JU::f32 scale)
 */
 void Bubble::initMeshes(void)
 {
-	// Initialize all materials
-	JU::MaterialManager::init();
-
 	// SPHERE (to be used for maxi an mini)
 	// ------
 	// MESH
@@ -111,17 +106,11 @@ void Bubble::initMeshes(void)
 	// MESH INSTANCES
 	// ------
 	// maxi
-    pmaterial_maxi_ = new JU::Material;
-    if (!JU::MaterialManager::getMaterial("ruby", *pmaterial_maxi_))
-        exit(EXIT_FAILURE);
-	pmesh_instance_maxi_ = new JU::GLMeshInstance(pmesh_, maxi_scale_, maxi_scale_, maxi_scale_, pmaterial_maxi_);
+	pmesh_instance_maxi_ = new JU::GLMeshInstance(pmesh_, maxi_scale_, maxi_scale_, maxi_scale_, JU::MaterialManager::getMaterial("ruby"));
 	pmesh_instance_maxi_->addColorTexture("pool");
 
 	// mini
-    pmaterial_mini_ = new JU::Material;
-    if (!JU::MaterialManager::getMaterial("pearl", *pmaterial_mini_))
-        exit(EXIT_FAILURE);
-	pmesh_instance_mini_ = new JU::GLMeshInstance(pmesh_, mini_scale_, mini_scale_, mini_scale_, pmaterial_mini_);
+	pmesh_instance_mini_ = new JU::GLMeshInstance(pmesh_, mini_scale_, mini_scale_, mini_scale_, JU::MaterialManager::getMaterial("pearl"));
 	pmesh_instance_mini_->addColorTexture("pool");
 }
 

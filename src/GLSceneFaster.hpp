@@ -71,7 +71,6 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
 
         void initializePrograms();
         void initializeFBO();
-        void initializeMaterials();
         void initializeTextures();
         void initializeObjects();
         void initializeCameras();
@@ -120,7 +119,6 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
         MeshMap 				mesh_map_;
         MeshInstanceMap 		mesh_instance_map_;
         NodeMap					node_map_;
-        MaterialMap				material_map_;
         NodeMap::const_iterator main_node_iter;
 
         // CAMERA CONTROLS
