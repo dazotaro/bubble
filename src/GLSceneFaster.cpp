@@ -254,7 +254,7 @@ void GLSceneFaster::initializeObjects()
     // MESH INSTANCE
     pmesh_instance = new JU::GLMeshInstance(pmesh, 50.0f, 50.0f, 1.0f, JU::MaterialManager::getMaterial("gray_rubber"));
     pmesh_instance->addColorTexture("brick");
-    mesh_instance_map_["plane_green"];
+    mesh_instance_map_["plane_green"] = pmesh_instance;
     // NODE
     // Give the plane a position and a orientation
     JU::Object3D plane(glm::vec3(0.0f, 0.0f, 0.0f), // Model's position
@@ -279,7 +279,7 @@ void GLSceneFaster::initializeObjects()
     // MESH INSTANCE
     pmesh_instance = new JU::GLMeshInstance(pmesh, 1.0f, 1.0f, 1.0f, JU::MaterialManager::getMaterial("gold"));
     pmesh_instance->addColorTexture("assimp");
-    mesh_instance_map_["assimp"];
+    mesh_instance_map_["assimp"] = pmesh_instance;
     // NODE: give the sphere a position and a orientation
     JU::Object3D assimp3d(glm::vec3(0.0f,  15.0f,  0.0f), // Model's position
                           glm::vec3(1.0f,  0.0f,  0.0f), // Model's X axis
