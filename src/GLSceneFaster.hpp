@@ -15,12 +15,13 @@
 #include <graphics/ArcBallController.hpp>	// ArcBallController
 #include <AntTweakBar.h>						// TwBar
 
-// Local includes
-#include "Bubble.hpp"							// Bubble
+
+// FORWARD DECLARATIONS
+class Bubble;
+class Landscape;
 
 namespace JU
 {
-// Forward Declarations
 class GLMesh;
 class GLMeshInstance;
 class Node3D;
@@ -113,7 +114,8 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
         bool				record_depth_;
 
         // ASSET MANAGEMENT
-        Bubble*					pbubble_;
+        Bubble*                 pbubble_;
+        Landscape*              plandscape_;
         MeshMap 				mesh_map_;
         MeshInstanceMap 		mesh_instance_map_;
         NodeMap					node_map_;

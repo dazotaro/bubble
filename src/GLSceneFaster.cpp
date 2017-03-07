@@ -8,6 +8,8 @@
 // Local includes
 #include "GLSceneFaster.hpp"      	// GLSceneFaster
 #include "IOHelper.hpp"				// SDL to IO helper functions
+#include "Bubble.hpp"               // Bubble
+#include "Landscape.hpp"            // Landscape
 
 // Global includes
 #include <graphics/GLMesh.hpp>               // GLMesh
@@ -33,6 +35,7 @@ GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height)
 									 scene_width_(0), scene_height_(0),
 									 deferredFBO_(0), depthBuf_(0), posTex_(0), normTex_(0), colorTex_(0), shininessTex_(0),
 									 pass1Index_(0), pass2Index_(0), record_depth_(true),
+									 pbubble_(nullptr), plandscape_(nullptr),
 									 tp_camera_(nullptr), camera_(nullptr), control_camera_(true), camera_controller_(width, height, 0.2f),
 									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(2),
 									 ptw_bar_(nullptr), tw_force_direction_(glm::vec3(1.0f, 0.0f, 0.0f)), tw_force_strength_(5.0f),
@@ -219,19 +222,43 @@ void GLSceneFaster::initializeObjects()
 	JU::Node3D*			pnode;
 	JU::Mesh2 			mesh;
 
-	// BUBBLE
-	// ------
-	pbubble_ = new Bubble();
-	pbubble_->init();
-	// NODE: give the sphere a position and a orientation
-	JU::Object3D bubble3d(glm::vec3(0.0f, 10.0f,  0.0f), // Model's position
-				      	  glm::vec3(1.0f,  0.0f,  0.0f), // Model's X axis
-						  glm::vec3(0.0f,  0.0f, -1.0f), // Model's Y axis
-						  glm::vec3(0.0f,  1.0f,  0.0f));// Model's Z axis
-	pnode = new JU::Node3D(bubble3d, pbubble_, true);
-	node_map_["bubble"] = pnode;
+    // BUBBLE
+    // ------
+    pbubble_ = new Bubble();
+    pbubble_->init();
+    // NODE: give the sphere a position and a orientation
+    JU::Object3D bubble3d(glm::vec3(0.0f, 10.0f,  0.0f), // Model's position
+                          glm::vec3(1.0f,  0.0f,  0.0f), // Model's X axis
+                          glm::vec3(0.0f,  0.0f, -1.0f), // Model's Y axis
+                          glm::vec3(0.0f,  1.0f,  0.0f));// Model's Z axis
+    pnode = new JU::Node3D(bubble3d, pbubble_, true);
+    node_map_["bubble"] = pnode;
 
-	main_node_iter = node_map_.find("bubble");
+    main_node_iter = node_map_.find("bubble");
+
+    // LANDSCAPE OF BLOCKS
+    // ------
+    const JU::uint32 num_rows = 4;
+    const JU::uint32 num_cols = 8;
+    Landscape::BlockInfo land_data[num_rows * num_cols] =
+    {
+        4, 1, 0, 0, 0, 0, 1, 5,
+        3, 2, 0, 0, 0, 0, 1, 4,
+        2, 2, 0, 0, 0, 0, 1, 3,
+        1, 1, 0, 0, 0, 0, 1, 2
+    };
+    glm::vec3 grid_scale(2.0f);
+    plandscape_ = new Landscape();
+    plandscape_->init(land_data, num_rows, num_cols, grid_scale);
+    // NODE: give the sphere a position and a orientation
+    JU::Object3D ladscape3d(glm::vec3(1.0f, grid_scale.y * 0.5f, 1.0f), // Model's position
+                            glm::vec3(1.0f, 0.0f, 0.0f), // Model's X axis
+                            glm::vec3(0.0f, 1.0f, 0.0f), // Model's Y axis
+                            glm::vec3(0.0f, 0.0f, 1.0f));// Model's Z axis
+    pnode = new JU::Node3D(ladscape3d, plandscape_, true);
+    node_map_["landscape"] = pnode;
+
+    main_node_iter = node_map_.find("landscape");
 
 	// SPHERE (to be used by lights)
 	// ------
@@ -1037,6 +1064,7 @@ void GLSceneFaster::clear(void)
 
     // Bubble
     delete pbubble_;
+    delete plandscape_;
 
     // AntTweakBar
     TwTerminate();
