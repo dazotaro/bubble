@@ -45,7 +45,7 @@ class Bubble : public JU::DrawInterface
 	private:
         void initMeshes(void);
 
-	private:
+    private:
 		JU::Object3D 		mini_obj_;				//!< Position and orientation of "mini" in "maxi's" coordinate system
 		JU::GLMesh*			pmesh_;					//!< Mesh to be drawn
 		JU::GLMeshInstance* pmesh_instance_maxi_;	//!< Mini's instance of *pmesh_

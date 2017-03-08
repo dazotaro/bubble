@@ -107,8 +107,8 @@ void Landscape::draw(const JU::GLSLProgram &program, const glm::mat4 & model, co
             if (height > 0)
             {
                 // Translate this block (we only add half the height because the position of the object is at the center
-                glm::mat4 trans_mat = glm::translate(glm::mat4(), glm::vec3(col, 0.5f, row));
-                glm::mat4 block_scale = glm::scale(scale_mat, glm::vec3(1.0f, height, 1.0f));
+                glm::mat4 trans_mat = glm::translate(glm::mat4(), glm::vec3(col, row, 0.5f));
+                glm::mat4 block_scale = glm::scale(scale_mat, glm::vec3(1.0f, 1.0f, height));
                 pmesh_instance_->draw(program, model * scale_mat * block_scale * trans_mat, view, projection);
             }
         }

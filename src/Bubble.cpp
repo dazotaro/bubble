@@ -21,7 +21,8 @@ Bubble::Bubble(void) : pmesh_(nullptr), pmesh_instance_maxi_(nullptr), pmesh_ins
 						maxi_scale_(1.0f), mini_scale_(0.5f),
 						force_dir_(glm::vec3(0.0f, 0.0f, 0.0f)), force_mag_(0.0f)
 {
-	mini_obj_.setPosition(glm::vec3(5.0f, 0.0f, 0.0f));
+    // Mini's position in Maxi's coordinate system
+	mini_obj_.setPosition(glm::vec3(0.0f, 0.0f, 2.0f));
 }
 
 
@@ -77,14 +78,13 @@ void Bubble::update(const glm::vec3& direction, const JU::f32 distance)
 */
 void Bubble::setScale(BubbleMember member_id, JU::f32 scale)
 {
-	if (member_id == MAXI)
-		pmesh_instance_maxi_->setScale(scale, scale, scale);
-	else if (member_id == MINI)
-		pmesh_instance_mini_->setScale(scale, scale, scale);
-	else
-		exit(EXIT_FAILURE);
+    if (member_id == MAXI)
+        pmesh_instance_maxi_->setScale(scale, scale, scale);
+    else if (member_id == MINI)
+        pmesh_instance_mini_->setScale(scale, scale, scale);
+    else
+        exit(EXIT_FAILURE);
 }
-
 
 
 /**

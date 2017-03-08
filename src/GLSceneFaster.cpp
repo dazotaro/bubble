@@ -26,6 +26,7 @@
 #include <graphics/MeshImporter.hpp>         // MeshImporter (Assimp)
 #include <core/Object3D.hpp>     			 // Object3D
 #include <core/Singleton.hpp>				 // JU::Singleton
+#include <core/Keyboard.hpp>                 // JU::Keyboard
 #include <core/SystemLog.hpp>				 // JU::SystemLog
 #include <glm/gtx/transform.hpp>			 // glm::rotate
 #include <math.h>							 // M_PI
@@ -38,8 +39,8 @@ GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height)
 									 pbubble_(nullptr), plandscape_(nullptr),
 									 tp_camera_(nullptr), camera_(nullptr), control_camera_(true), camera_controller_(width, height, 0.2f),
 									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(2),
-									 ptw_bar_(nullptr), tw_force_direction_(glm::vec3(1.0f, 0.0f, 0.0f)), tw_force_strength_(5.0f),
-									 tw_scale_maxi_(5.0f), tw_scale_mini_(2.5f)
+									 ptw_bar_(nullptr), tw_force_direction_(glm::vec3(0.0f, 0.0f, 1.0f)), tw_force_strength_(5.0f),
+									 tw_scale_maxi_(5.0f), tw_scale_mini_(1.5f)
 {
 	computeSceneSize(width, height);
 	main_node_iter = node_map_.end();
@@ -227,10 +228,10 @@ void GLSceneFaster::initializeObjects()
     pbubble_ = new Bubble();
     pbubble_->init();
     // NODE: give the sphere a position and a orientation
-    JU::Object3D bubble3d(glm::vec3(0.0f, 10.0f,  0.0f), // Model's position
-                          glm::vec3(1.0f,  0.0f,  0.0f), // Model's X axis
-                          glm::vec3(0.0f,  0.0f, -1.0f), // Model's Y axis
-                          glm::vec3(0.0f,  1.0f,  0.0f));// Model's Z axis
+    JU::Object3D bubble3d(glm::vec3(0.0f, 2.0f,  0.0f), // Model's position
+                          glm::vec3(1.0f,  0.0f, 0.0f), // Model's X axis
+                          glm::vec3(0.0f,  1.0f, 0.0f), // Model's Y axis
+                          glm::vec3(0.0f,  0.0f, 1.0f));// Model's Z axis
     pnode = new JU::Node3D(bubble3d, pbubble_, true);
     node_map_["bubble"] = pnode;
 
@@ -247,18 +248,18 @@ void GLSceneFaster::initializeObjects()
         2, 2, 0, 0, 0, 0, 1, 3,
         1, 1, 0, 0, 0, 0, 1, 2
     };
-    glm::vec3 grid_scale(2.0f);
+    glm::vec3 grid_scale(2.0f, 2.0f, 1.0f);
     plandscape_ = new Landscape();
     plandscape_->init(land_data, num_rows, num_cols, grid_scale);
     // NODE: give the sphere a position and a orientation
-    JU::Object3D ladscape3d(glm::vec3(1.0f, grid_scale.y * 0.5f, 1.0f), // Model's position
-                            glm::vec3(1.0f, 0.0f, 0.0f), // Model's X axis
-                            glm::vec3(0.0f, 1.0f, 0.0f), // Model's Y axis
-                            glm::vec3(0.0f, 0.0f, 1.0f));// Model's Z axis
-    pnode = new JU::Node3D(ladscape3d, plandscape_, true);
+    JU::Object3D landscape3d(glm::vec3(num_cols*(-0.5f)*grid_scale.x ,
+                                       grid_scale.z * 0.5f,
+                                       num_rows*(-0.5f)*grid_scale.y ), // Model's position in wold coordinates
+                             glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
+                             glm::vec3(0.0f, 0.0f, -1.0f), // Model's Y axis
+                             glm::vec3(0.0f, 1.0f,  0.0f));// Model's Z axis
+    pnode = new JU::Node3D(landscape3d, plandscape_, true);
     node_map_["landscape"] = pnode;
-
-    main_node_iter = node_map_.find("landscape");
 
 	// SPHERE (to be used by lights)
 	// ------
@@ -279,7 +280,8 @@ void GLSceneFaster::initializeObjects()
     pmesh->init(mesh);
     mesh_map_["plane"] = pmesh;
     // MESH INSTANCE
-    pmesh_instance = new JU::GLMeshInstance(pmesh, 50.0f, 50.0f, 1.0f, JU::MaterialManager::getMaterial("gray_rubber"));
+    glm::vec3 scale(50.0f, 50.0f, 1.0f);
+    pmesh_instance = new JU::GLMeshInstance(pmesh, scale.x, scale.y, scale.z, JU::MaterialManager::getMaterial("gray_rubber"));
     pmesh_instance->addColorTexture("brick");
     mesh_instance_map_["plane_green"] = pmesh_instance;
     // NODE
@@ -308,10 +310,10 @@ void GLSceneFaster::initializeObjects()
     pmesh_instance->addColorTexture("assimp");
     mesh_instance_map_["assimp"] = pmesh_instance;
     // NODE: give the sphere a position and a orientation
-    JU::Object3D assimp3d(glm::vec3(0.0f,  15.0f,  0.0f), // Model's position
-                          glm::vec3(1.0f,  0.0f,  0.0f), // Model's X axis
-                          glm::vec3(0.0f,  1.0f,  0.0f), // Model's Y axis
-                          glm::vec3(0.0f,  0.0f,  1.0f));// Model's Z axis
+    JU::Object3D assimp3d(glm::vec3(0.0f,  5.0f,  0.0f), // Model's position
+                          glm::vec3(1.0f,  0.0f, 0.0f), // Model's X axis
+                          glm::vec3(0.0f,  1.0f, 0.0f), // Model's Y axis
+                          glm::vec3(0.0f,  0.0f, 1.0f));// Model's Z axis
     pnode = new JU::Node3D(assimp3d, pmesh_instance, true);
     node_map_["assimp"] = pnode;
 
@@ -550,9 +552,13 @@ void GLSceneFaster::updateCamera(JU::uint32 time)
     // Use the arcball to control the camera or an object?
     if (control_camera_)
     {
+        JU::Object3D camera = static_cast<JU::Object3D>(*main_node_iter->second);
+        //camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
         // Convert the axis from the camera to the world coordinate system
-        axis = glm::vec3(tp_camera_->getTransformToParent() * glm::vec4(axis, 0.0f));
-        tp_camera_->update(static_cast<const JU::Object3D&>(*main_node_iter->second), radius_delta, angle, axis);
+        //axis = glm::vec3(tp_camera_->getTransformToParent() * glm::vec4(axis, 0.0f));
+        //tp_camera_->update(static_cast<const JU::Object3D&>(*main_node_iter->second), radius_delta, angle, axis);
+        tp_camera_->update(camera);
+
     }
     else
     {
@@ -641,6 +647,31 @@ void GLSceneFaster::updateSpotlightLights(JU::uint32 time)
 */
 void GLSceneFaster::updateBubble(JU::uint32 time)
 {
+    // Update bubble's position
+    static JU::Keyboard* pkeyboard = JU::Singleton<JU::Keyboard>::getInstance();
+    if (pkeyboard->isKeyDown(SDL_SCANCODE_UP))
+    {
+        auto bubble = node_map_["bubble"];
+
+        glm::vec3 forward(-bubble->getZAxis());
+        bubble->translate(forward * 0.1f);
+    }
+
+    if (pkeyboard->isKeyDown(SDL_SCANCODE_LEFT))
+    {
+        auto bubble = node_map_["bubble"];
+
+        bubble->rotateY(M_PI/180.0f);
+    }
+
+    if (pkeyboard->isKeyDown(SDL_SCANCODE_RIGHT))
+    {
+        auto bubble = node_map_["bubble"];
+
+        bubble->rotateY(-M_PI/180.0f);
+    }
+
+    // ANTWEAKBAR
 	pbubble_->setScale(Bubble::MAXI, tw_scale_maxi_);
 	pbubble_->setScale(Bubble::MINI, tw_scale_mini_);
 	pbubble_->update(tw_force_direction_, tw_force_strength_);
