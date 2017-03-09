@@ -25,7 +25,7 @@ namespace JU
 class GLMesh;
 class GLMeshInstance;
 class Node3D;
-class Object3D;
+class Transform3D;
 class CameraInterface;
 class CameraThirdPerson;
 }
@@ -44,7 +44,6 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
         typedef std::map<std::string, JU::Node3D *> 		NodeMap;
         typedef std::map<std::string, JU::GLMesh*> 			MeshMap;
         typedef std::map<std::string, JU::GLMeshInstance*> 	MeshInstanceMap;
-        typedef std::map<std::string, JU::Object3D*>		Object3DMap;
 
     public:
         GLSceneFaster(int width, int height);

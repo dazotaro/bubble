@@ -24,7 +24,7 @@
 #include <graphics/DebugGlm.hpp>             // debug::print
 #include <graphics/GLSLProgramExt.hpp>		 // GLSLProgramExt::setUniform
 #include <graphics/MeshImporter.hpp>         // MeshImporter (Assimp)
-#include <core/Object3D.hpp>     			 // Object3D
+#include <core/Transform3D.hpp>     		 // Transform3D
 #include <core/Singleton.hpp>				 // JU::Singleton
 #include <core/Keyboard.hpp>                 // JU::Keyboard
 #include <core/SystemLog.hpp>				 // JU::SystemLog
@@ -228,10 +228,10 @@ void GLSceneFaster::initializeObjects()
     pbubble_ = new Bubble();
     pbubble_->init();
     // NODE: give the sphere a position and a orientation
-    JU::Object3D bubble3d(glm::vec3(0.0f, 2.0f,  0.0f), // Model's position
-                          glm::vec3(1.0f,  0.0f, 0.0f), // Model's X axis
-                          glm::vec3(0.0f,  1.0f, 0.0f), // Model's Y axis
-                          glm::vec3(0.0f,  0.0f, 1.0f));// Model's Z axis
+    JU::Transform3D bubble3d(glm::vec3(0.0f, 2.0f,  0.0f), // Model's position
+                             glm::vec3(1.0f,  0.0f, 0.0f), // Model's X axis
+                             glm::vec3(0.0f,  1.0f, 0.0f), // Model's Y axis
+                             glm::vec3(0.0f,  0.0f, 1.0f));// Model's Z axis
     pnode = new JU::Node3D(bubble3d, pbubble_, true);
     node_map_["bubble"] = pnode;
 
@@ -252,12 +252,12 @@ void GLSceneFaster::initializeObjects()
     plandscape_ = new Landscape();
     plandscape_->init(land_data, num_rows, num_cols, grid_scale);
     // NODE: give the sphere a position and a orientation
-    JU::Object3D landscape3d(glm::vec3(num_cols*(-0.5f)*grid_scale.x ,
-                                       grid_scale.z * 0.5f,
-                                       num_rows*(-0.5f)*grid_scale.y ), // Model's position in wold coordinates
-                             glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
-                             glm::vec3(0.0f, 0.0f, -1.0f), // Model's Y axis
-                             glm::vec3(0.0f, 1.0f,  0.0f));// Model's Z axis
+    JU::Transform3D landscape3d(glm::vec3(num_cols*(-0.5f)*grid_scale.x ,
+                                grid_scale.z * 0.5f,
+                                num_rows*(-0.5f)*grid_scale.y ), // Model's position in wold coordinates
+                                glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
+                                glm::vec3(0.0f, 0.0f, -1.0f), // Model's Y axis
+                                glm::vec3(0.0f, 1.0f,  0.0f));// Model's Z axis
     pnode = new JU::Node3D(landscape3d, plandscape_, true);
     node_map_["landscape"] = pnode;
 
@@ -286,10 +286,10 @@ void GLSceneFaster::initializeObjects()
     mesh_instance_map_["plane_green"] = pmesh_instance;
     // NODE
     // Give the plane a position and a orientation
-    JU::Object3D plane(glm::vec3(0.0f, 0.0f, 0.0f), // Model's position
-                   glm::vec3(1.0f, 0.0f, 0.0f), // Model's X axis
-                   glm::vec3(0.0f, 0.0f,-1.0f), // Model's Y axis
-                   glm::vec3(0.0f, 1.0f, 0.0f));// Model's Z axis
+    JU::Transform3D plane(glm::vec3(0.0f, 0.0f, 0.0f), // Model's position
+                          glm::vec3(1.0f, 0.0f, 0.0f), // Model's X axis
+                          glm::vec3(0.0f, 0.0f,-1.0f), // Model's Y axis
+                          glm::vec3(0.0f, 1.0f, 0.0f));// Model's Z axis
     pnode = new JU::Node3D(plane, pmesh_instance, true);
 	node_map_["plane"] = pnode;
 
@@ -310,10 +310,10 @@ void GLSceneFaster::initializeObjects()
     pmesh_instance->addColorTexture("assimp");
     mesh_instance_map_["assimp"] = pmesh_instance;
     // NODE: give the sphere a position and a orientation
-    JU::Object3D assimp3d(glm::vec3(0.0f,  5.0f,  0.0f), // Model's position
-                          glm::vec3(1.0f,  0.0f, 0.0f), // Model's X axis
-                          glm::vec3(0.0f,  1.0f, 0.0f), // Model's Y axis
-                          glm::vec3(0.0f,  0.0f, 1.0f));// Model's Z axis
+    JU::Transform3D assimp3d(glm::vec3(0.0f,  5.0f,  0.0f), // Model's position
+                             glm::vec3(1.0f,  0.0f, 0.0f), // Model's X axis
+                             glm::vec3(0.0f,  1.0f, 0.0f), // Model's Y axis
+                             glm::vec3(0.0f,  0.0f, 1.0f));// Model's Z axis
     pnode = new JU::Node3D(assimp3d, pmesh_instance, true);
     node_map_["assimp"] = pnode;
 
@@ -330,7 +330,7 @@ void GLSceneFaster::initializeObjects()
 void GLSceneFaster::initializeCameras()
 {
     tp_camera_ = new JU::CameraThirdPerson(JU::CameraIntrinsic(90.f, scene_width_/(JU::f32)scene_height_, 0.5f, 1000.f),
-    								   	   static_cast<JU::Object3D>(*main_node_iter->second),
+    								   	   static_cast<JU::Transform3D>(*main_node_iter->second),
 										   10.0f, 0.0f, M_PI / 4.0f);
     camera_ = dynamic_cast<JU::CameraInterface *>(tp_camera_);
 }
@@ -380,10 +380,10 @@ void GLSceneFaster::initializePositionalLights()
     	JU::f32 z = radius * cosf(angle);
     	JU::f32 x = radius * sinf(angle);
     	glm::vec3 light_pos (x, 20.f, z);
-    	JU::Object3D light_frame(light_pos,
-                           	   	 glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
-							     glm::vec3(0.0f, 1.0f,  0.0f), // Model's Y axis
-							     glm::vec3(0.0f, 0.0f,  1.0f));// Model's Z axis
+    	JU::Transform3D light_frame(light_pos,
+                           	   	    glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
+							        glm::vec3(0.0f, 1.0f,  0.0f), // Model's Y axis
+							        glm::vec3(0.0f, 0.0f,  1.0f));// Model's Z axis
 
     	JU::Node3D *pnode = new JU::Node3D(light_frame, pmesh_instance, true);
 
@@ -428,10 +428,10 @@ void GLSceneFaster::initializeSpotlightLights()
     	JU::f32 z = radius * cosf(angle);
     	JU::f32 x = radius * sinf(angle);
     	glm::vec3 light_pos (x, 20.f, z);
-    	JU::Object3D light_frame(light_pos,
-                           	     glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
-								 glm::vec3(0.0f, 1.0f,  0.0f), // Model's Y axis
-								 glm::vec3(0.0f, 0.0f,  1.0f));// Model's Z axis
+    	JU::Transform3D light_frame(light_pos,
+                           	        glm::vec3(1.0f, 0.0f,  0.0f), // Model's X axis
+								    glm::vec3(0.0f, 1.0f,  0.0f), // Model's Y axis
+								    glm::vec3(0.0f, 0.0f,  1.0f));// Model's Z axis
         glm::vec3 light_dir = glm::normalize(light_pos - main_node_iter->second->getPosition());
 
         JU::Node3D* pnode = new JU::Node3D(light_frame, pmesh_instance, true);
@@ -552,11 +552,11 @@ void GLSceneFaster::updateCamera(JU::uint32 time)
     // Use the arcball to control the camera or an object?
     if (control_camera_)
     {
-        JU::Object3D camera = static_cast<JU::Object3D>(*main_node_iter->second);
+        JU::Transform3D camera = static_cast<JU::Transform3D>(*main_node_iter->second);
         //camera.translate(glm::vec3(0.0f, 0.0f, 5.0f));
         // Convert the axis from the camera to the world coordinate system
         //axis = glm::vec3(tp_camera_->getTransformToParent() * glm::vec4(axis, 0.0f));
-        //tp_camera_->update(static_cast<const JU::Object3D&>(*main_node_iter->second), radius_delta, angle, axis);
+        //tp_camera_->update(static_cast<const JU::Transform3D&>(*main_node_iter->second), radius_delta, angle, axis);
         tp_camera_->update(camera);
 
     }

@@ -9,7 +9,7 @@
 #define LANDSCAPE_HPP_
 
 // Global includes
-#include <core/Object3D.hpp>                // Object3D
+#include <core/Transform3D.hpp>         // Transform3D
 #include <graphics/DrawInterface.hpp>   // DrawInterface
 #include <graphics/GLMesh.hpp>          // GLMesh
 #include <graphics/GLMeshInstance.hpp>  // GLMeshInstance

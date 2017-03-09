@@ -9,7 +9,7 @@
 #define BUBBLE_HPP_
 
 // Global includes
-#include <core/Object3D.hpp>				// Object3D
+#include <core/Transform3D.hpp>			// Transform3D
 #include <graphics/DrawInterface.hpp>	// DrawInterface
 #include <graphics/GLMesh.hpp>			// GLMesh
 #include <graphics/GLMeshInstance.hpp>	// GLMeshInstance
@@ -46,7 +46,7 @@ class Bubble : public JU::DrawInterface
         void initMeshes(void);
 
     private:
-		JU::Object3D 		mini_obj_;				//!< Position and orientation of "mini" in "maxi's" coordinate system
+		JU::Transform3D 	mini_obj_;				//!< Position and orientation of "mini" in "maxi's" coordinate system
 		JU::GLMesh*			pmesh_;					//!< Mesh to be drawn
 		JU::GLMeshInstance* pmesh_instance_maxi_;	//!< Mini's instance of *pmesh_
 		JU::GLMeshInstance* pmesh_instance_mini_;	//!< Maxi's instance of *pmesh_
