@@ -595,20 +595,29 @@ void GLSceneFaster::updatePositionalLights(JU::uint32 time)
     static const JU::f32 angle_speed = (2.0 * M_PI * 0.25f) * 0.001f ; // 2000 milliseconds to complete a revolution
 
     glm::mat4 rotation = glm::rotate(glm::mat4(1.f), angle_speed * time, glm::vec3(0.0f, 1.0f, 0.0f));
-    JU::uint32 index = 0;
-    for (JU::LightPositionalVector::iterator light = lights_positional_.begin(); light != lights_positional_.end(); ++light)
+    JU::uint32 num_lights = lights_positional_.size();
+
+    if (num_lights)
     {
-        glm::vec4 position = rotation * glm::vec4(light->position_, 0.0f);
-        light->position_.x = position.x;
-        light->position_.y = position.y;
-        light->position_.z = position.z;
+        JU::uint32 index = 0;
+        // First light is the one mounted on the camera
+        // Last light is positioned at the camera's position
+        lights_positional_[index].position_ = tp_camera_->getPosition();
+        node_map_[std::string("light_pos") + std::to_string(index)]->setPosition(lights_positional_[index].position_);
 
-        node_map_[std::string("light_pos") + std::to_string(index)]->setPosition(light->position_);
+        index++;
 
-        ++index;
+        for (; index < num_lights; ++index)
+        {
+            glm::vec4 position = rotation * glm::vec4(lights_positional_[index].position_, 0.0f);
+            lights_positional_[index].position_.x = position.x;
+            lights_positional_[index].position_.y = position.y;
+            lights_positional_[index].position_.z = position.z;
+
+            node_map_[std::string("light_pos") + std::to_string(index)]->setPosition(lights_positional_[index].position_);
+        }
     }
 }
-
 
 
 void GLSceneFaster::updateDirectionalLights(JU::uint32 time)
