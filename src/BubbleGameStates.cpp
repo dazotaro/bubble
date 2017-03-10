@@ -24,7 +24,7 @@ BubbleGameState::~BubbleGameState()
 
 bool BubbleGameState::enter()
 {
-	p_scene_ = new GLSceneFaster(800, 800);
+	p_scene_ = new GLSceneFaster(1280, 720);
 	p_scene_->init();
 
     return true;

@@ -13,7 +13,9 @@
 #include <graphics/GLScene.hpp>      		// GLScene
 #include <graphics/Lights.hpp>       		// LightPositionalVector, LightDirectionalVector, LightSpotlightVector
 #include <graphics/ArcBallController.hpp>	// ArcBallController
-#include <AntTweakBar.h>						// TwBar
+#ifdef _DEBUG
+    #include <AntTweakBar.h>                     // TwBar
+#endif
 
 
 // FORWARD DECLARATIONS
@@ -76,7 +78,9 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
         void initializePositionalLights();
         void initializeDirectionalLights();
         void initializeSpotlightLights();
+#ifdef _DEBUG
         void initAntTweakBar();
+#endif
 
         void updateCamera(JU::uint32 time);
 
@@ -94,7 +98,9 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
 
         void renderPass1();
         void renderPass2();
+#ifdef _DEBUG
         void renderDebug();
+#endif
 
     private:
         // INTERFACE
@@ -133,12 +139,14 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
         JU::LightDirectionalVector  lights_directional_;	//!< Vector holding all directional lights
         JU::LightSpotlightVector    lights_spotlight_;		//!< Vector holding all spotlights
 
+#ifdef _DEBUG
         // AntTweakBar
         TwBar* 		ptw_bar_;
         glm::vec3 	tw_force_direction_;
         JU::f32 	tw_force_strength_;
         JU::f32		tw_scale_maxi_;
         JU::f32 	tw_scale_mini_;
+#endif
 };
 
 #endif /* GLSCENEFASTER_HPP_ */

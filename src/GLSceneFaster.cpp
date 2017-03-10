@@ -32,15 +32,18 @@
 #include <math.h>							 // M_PI
 
 
+
 GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height),
 									 scene_width_(0), scene_height_(0),
 									 deferredFBO_(0), depthBuf_(0), posTex_(0), normTex_(0), colorTex_(0), shininessTex_(0),
 									 pass1Index_(0), pass2Index_(0), record_depth_(true),
 									 pbubble_(nullptr), plandscape_(nullptr),
 									 tp_camera_(nullptr), camera_(nullptr), control_camera_(true), camera_controller_(width, height, 0.2f),
-									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(2),
-									 ptw_bar_(nullptr), tw_force_direction_(glm::vec3(0.0f, 0.0f, 1.0f)), tw_force_strength_(5.0f),
+									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(2)
+#ifdef _DEBUG
+                                     , ptw_bar_(nullptr), tw_force_direction_(glm::vec3(0.0f, 0.0f, 1.0f)), tw_force_strength_(5.0f),
 									 tw_scale_maxi_(5.0f), tw_scale_mini_(1.5f)
+#endif
 {
 	computeSceneSize(width, height);
 	main_node_iter = node_map_.end();
@@ -82,7 +85,9 @@ void GLSceneFaster::init(void)
 	SDL_event_manager->attachEventHandler(SDL_MOUSEBUTTONUP, 	"SceneButtonUp", 	this);
 	SDL_event_manager->attachEventHandler(SDL_MOUSEWHEEL, 		"SceneMouseWheel", 	this);
 
+#ifdef _DEBUG
     initAntTweakBar();
+#endif
 }
 
 
@@ -443,6 +448,7 @@ void GLSceneFaster::initializeSpotlightLights()
 }
 
 
+#ifdef _DEBUG
 
 /**
 * @brief Initialize AntTweakBar
@@ -465,7 +471,7 @@ void GLSceneFaster::initAntTweakBar()
     TwAddVarRW(ptw_bar_, "ForceStrength", TW_TYPE_FLOAT, &tw_force_strength_,
                " group ='Bubble' min=1.0 max=10.0 step=0.1 label='ForceMag' help='Change the force strength.' ");
 }
-
+#endif
 
 
 void GLSceneFaster::loadLights(void) const
@@ -680,10 +686,12 @@ void GLSceneFaster::updateBubble(JU::uint32 time)
         bubble->rotateY(-M_PI/180.0f);
     }
 
+#ifdef _DEBUG
     // ANTWEAKBAR
 	pbubble_->setScale(Bubble::MAXI, tw_scale_maxi_);
 	pbubble_->setScale(Bubble::MINI, tw_scale_mini_);
 	pbubble_->update(tw_force_direction_, tw_force_strength_);
+#endif
 }
 
 
@@ -714,10 +722,11 @@ void GLSceneFaster::render(void)
 
     renderPass1();
 	renderPass2();
+#ifdef _DEBUG
 	renderDebug();
-
-	// AntTweakBar
-	TwDraw();  // draw the tweak bar(s)
+    // AntTweakBar
+    TwDraw();  // draw the tweak bar(s)
+#endif
 }
 
 
@@ -808,6 +817,7 @@ void GLSceneFaster::renderPass2()
 
 
 
+#ifdef _DEBUG
 /**
 * @brief Debug rendering of textures
 *
@@ -864,11 +874,12 @@ void GLSceneFaster::renderDebug()
 
     JU::TextureManager::unbindAllTextures();
 }
-
+#endif
 
 
 void GLSceneFaster::computeSceneSize(JU::uint32 width, JU::uint32 height)
 {
+    std::printf("%s --> %i, %i\n", __PRETTY_FUNCTION__, width, height);
     // Leave 20% of the canvas for displaying the auxiliary textures
     scene_width_  = width * 0.8f;
     scene_height_ = height;
@@ -952,8 +963,10 @@ void GLSceneFaster::resize(int width, int height)
     camera_->setAspectRatio(static_cast<JU::f32>(scene_width_)/scene_height_);
     camera_controller_.windowResize(scene_width_, scene_height_);
 
+#ifdef _DEBUG
     // AntTweakBar
 	TwWindowSize(width, height);
+#endif
 }
 
 
@@ -967,8 +980,14 @@ void GLSceneFaster::resize(int width, int height)
 */
 void GLSceneFaster::keyboard(unsigned char key, int x, int y)
 {
-	if (!TwEventKeyboardGLUT(key, x, y))
-	{
+    bool handled = false;
+
+#ifdef _DEBUG
+	handled = TwEventKeyboardGLUT(key, x, y);
+#endif
+
+    if (!handled)
+    {
 		switch (key)
 		{
 			// GLSL Program: change active program
@@ -1030,7 +1049,13 @@ void GLSceneFaster::keyboard(unsigned char key, int x, int y)
 
 void GLSceneFaster::mouseClick(int button, int state, int x, int y)
 {
-	if (!TwEventMouseButtonGLUT(button, state, x, y))
+    bool handled = false;
+
+#ifdef _DEBUG
+	handled = TwEventMouseButtonGLUT(button, state, x, y);
+#endif
+
+	if (!handled)
 	{
 		camera_controller_.mouseClick(button, state, x, y);
 	}
@@ -1040,7 +1065,13 @@ void GLSceneFaster::mouseClick(int button, int state, int x, int y)
 
 void GLSceneFaster::mouseMotion(int x, int y)
 {
-	if (!TwEventMouseMotionGLUT(x, y))
+    bool handled = false;
+
+#ifdef _DEBUG
+	handled = TwEventMouseMotionGLUT(x, y);
+#endif
+
+	if (!handled)
 	{
 		camera_controller_.mouseMotion(x, y);
 	}
@@ -1106,8 +1137,11 @@ void GLSceneFaster::clear(void)
     delete pbubble_;
     delete plandscape_;
 
+#ifdef _DEBUG
     // AntTweakBar
     TwTerminate();
+#endif
+
 }
 
 
