@@ -109,6 +109,8 @@ JU::f32 Bubble::getScale (BubbleMember member_id) const
             std::exit(EXIT_FAILURE);
 
     }
+
+    return scale;
 }
 
 
