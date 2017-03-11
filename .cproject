@@ -69,8 +69,6 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.2060991689" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
 								<option id="gnu.both.asm.option.include.paths.801002800" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/peaworm}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/rocket}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/toyRocket}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2124980878" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
@@ -161,7 +159,6 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.release.1603246857" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.release">
 								<option id="gnu.both.asm.option.include.paths.176845930" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/peaworm}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/toyRocket}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1004522067" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
