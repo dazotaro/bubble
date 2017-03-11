@@ -95,8 +95,8 @@ void Landscape::init(const BlockInfo* pblock, const JU::uint32 num_rows, const J
 */
 bool Landscape::isCollidingWithSphere(glm::vec3 position, JU::f32 radius) const
 {
-    const JU::int32 col = std::floor(position.x / scale_.x);
-    const JU::int32 row = -std::floor(position.z / scale_.y);
+    const JU::uint32 col = std::floor(position.x / scale_.x);
+    const JU::uint32 row = -std::floor(position.z / scale_.y);
 
     std::printf("Position (%f, %f)\n", position.x, -position.z);
     std::printf("Row, column = %i, %i\n", row, col);
@@ -107,9 +107,10 @@ bool Landscape::isCollidingWithSphere(glm::vec3 position, JU::f32 radius) const
     const JU::f32 offsetX = - position.x - (col * scale_.x);
     const JU::f32 offsetY = - position.z - (row * scale_.y);
 
-    // Center cell
+    // No collision if outside of the grid's bounds
     if (row >= 0 && row < num_rows_ && col >= 0 && col < num_cols_)
     {
+        // Center cell
         if (pblock_[center_cell].height_)
         return true;
 
