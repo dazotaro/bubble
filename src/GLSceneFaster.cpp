@@ -32,7 +32,6 @@
 #include <math.h>							 // M_PI
 
 
-
 GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height),
 									 scene_width_(0), scene_height_(0),
 									 deferredFBO_(0), depthBuf_(0), posTex_(0), normTex_(0), colorTex_(0), shininessTex_(0),
@@ -253,7 +252,7 @@ void GLSceneFaster::initializeObjects()
         2, 2, 0, 0, 0, 0, 1, 3,
         1, 1, 0, 0, 0, 0, 1, 2
     };
-    glm::vec3 grid_scale(2.0f, 2.0f, 1.0f);
+    glm::vec3 grid_scale(2.0f, 2.0f, 1.0f);  // Scale in the grid's local coordinate system (XY is the horizontal plane)
     plandscape_ = new Landscape();
     plandscape_->init(land_data, num_rows, num_cols, grid_scale);
     // NODE: give the sphere a position and a orientation
@@ -668,10 +667,20 @@ void GLSceneFaster::updateBubble(JU::uint32 time)
     static JU::Keyboard* pkeyboard = JU::Singleton<JU::Keyboard>::getInstance();
     if (pkeyboard->isKeyDown(SDL_SCANCODE_UP))
     {
-        auto bubble = node_map_["bubble"];
+        JU::Node3D* pnode_bubble = node_map_["bubble"];
 
-        glm::vec3 forward(-bubble->getZAxis());
-        bubble->translate(forward * 0.1f);
+        glm::vec3 forward(-pnode_bubble->getZAxis());
+        pnode_bubble->translate(forward * 0.1f);
+
+        // Collision with landscape?
+        JU::Node3D* pnode_grid= node_map_["landscape"];
+        if (!pnode_grid)
+        {
+            std::exit(EXIT_FAILURE);
+        }
+        if (plandscape_->isCollidingWithSphere(pnode_bubble->getPosition() - pnode_grid->getPosition(), pbubble_->getScale(Bubble::MAXI)))
+            pnode_bubble->translate(-forward * 0.1f);
+
     }
 
     if (pkeyboard->isKeyDown(SDL_SCANCODE_LEFT))

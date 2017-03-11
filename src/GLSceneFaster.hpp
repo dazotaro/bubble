@@ -83,12 +83,10 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
 #endif
 
         void updateCamera(JU::uint32 time);
-
         void updateLights(JU::uint32 time);
         void updatePositionalLights(JU::uint32 time);
         void updateDirectionalLights(JU::uint32 time);
         void updateSpotlightLights(JU::uint32 time);
-
         void updateBubble(JU::uint32 time);
 #ifdef _DEBUG
         void updateFPS(JU::uint32 time);

@@ -31,6 +31,7 @@ class Landscape : public JU::DrawInterface
         Landscape();
         virtual ~Landscape();
         void init(const BlockInfo* pblock, const JU::uint32 num_rows, const JU::uint32 num_cols, const glm::vec3& scale);
+        bool isCollidingWithSphere(glm::vec3 position, JU::f32 radius) const;
 
     //DrawInterface
     public:

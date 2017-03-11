@@ -87,6 +87,91 @@ void Landscape::init(const BlockInfo* pblock, const JU::uint32 num_rows, const J
 
 
 /**
+* @brief Is the sphere colliding with the Grid
+*
+* @param position   Coordinates of the center of the sphere respect to the grid's origin
+* @param radius     Radius of the sphere
+* @return True if colliding, false otherwise
+*/
+bool Landscape::isCollidingWithSphere(glm::vec3 position, JU::f32 radius) const
+{
+    const JU::int32 col = std::floor(position.x / scale_.x);
+    const JU::int32 row = -std::floor(position.z / scale_.y);
+
+    std::printf("Position (%f, %f)\n", position.x, -position.z);
+    std::printf("Row, column = %i, %i\n", row, col);
+
+    const JU::int32 last_cell = num_rows_ * num_cols_ - 1;
+    const JU::int32 center_cell = row * num_cols_ + col;        // Index of cell containing the center of the object
+
+    const JU::f32 offsetX = - position.x - (col * scale_.x);
+    const JU::f32 offsetY = - position.z - (row * scale_.y);
+
+    // Center cell
+    if (row >= 0 && row < num_rows_ && col >= 0 && col < num_cols_)
+    {
+        if (pblock_[center_cell].height_)
+        return true;
+
+        // overlapping?
+        bool north = false;
+        bool south = false;
+        bool east  = false;
+        bool west  = false;
+
+        // NORTH
+        const JU::int32 north_cell = center_cell + num_cols_;
+        if (north_cell <= last_cell && (scale_.y - offsetY) < radius)
+        {
+            north = true;
+            if (pblock_[north_cell].height_)
+                return true;
+        }
+        // EAST
+        const JU::int32 east_cell = center_cell + 1;
+        if (east_cell <= last_cell && (scale_.x - offsetX) < radius)
+        {
+            east = true;
+            if (pblock_[east_cell].height_)
+                return true;
+        }
+        // SOUTH
+        const JU::int32 south_cell = center_cell - num_cols_;
+        if (south_cell >= 0 && offsetY < radius)
+        {
+            south = true;
+            if (pblock_[south_cell].height_)
+                return true;
+        }
+        // WEST
+        const JU::int32 west_cell = center_cell - 1;
+        if (west_cell >= 0 && offsetX < radius)
+        {
+            west = true;
+            if (pblock_[west_cell].height_)
+                return true;
+        }
+
+
+        // NORTH-EAST
+        if (north && east && pblock_[center_cell + num_cols_ + 1].height_)
+            return true;
+        // NORTH-WEST
+        if (north && west && pblock_[center_cell + num_cols_ - 1].height_)
+            return true;
+        // SOUTH-EAST
+        if (south && east && pblock_[center_cell - num_cols_ + 1].height_)
+            return true;
+        // SOUTH-WEST
+        if (south && west && pblock_[center_cell - num_cols_ - 1].height_)
+            return true;
+    }
+
+    return false;
+}
+
+
+/**
 * @brief Draw function
 *
 * @param program    GLSLProgram to draw this object
@@ -97,7 +182,7 @@ void Landscape::init(const BlockInfo* pblock, const JU::uint32 num_rows, const J
 */
 void Landscape::draw(const JU::GLSLProgram &program, const glm::mat4 & model, const glm::mat4 &view, const glm::mat4 &projection) const
 {
-    const glm::mat4 scale_mat = glm::scale(glm::mat4(), scale_);
+    //const glm::mat4 scale_mat = glm::scale(glm::mat4(), scale_);
 
     for (JU::uint32 row = 0; row < num_rows_; row++)
     {
@@ -108,8 +193,8 @@ void Landscape::draw(const JU::GLSLProgram &program, const glm::mat4 & model, co
             {
                 // Translate this block (we only add half the height because the position of the object is at the center
                 glm::mat4 trans_mat = glm::translate(glm::mat4(), glm::vec3(col, row, 0.5f));
-                glm::mat4 block_scale = glm::scale(scale_mat, glm::vec3(1.0f, 1.0f, height));
-                pmesh_instance_->draw(program, model * scale_mat * block_scale * trans_mat, view, projection);
+                glm::mat4 block_scale = glm::scale(glm::mat4(), glm::vec3(scale_.x, scale_.y, height));
+                pmesh_instance_->draw(program, model * block_scale * trans_mat, view, projection);
             }
         }
     }
