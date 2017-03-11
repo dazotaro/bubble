@@ -142,12 +142,13 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
 
 #ifdef _DEBUG
         // AntTweakBar
-        TwBar* 		ptw_bar_;
-        glm::vec3 	tw_force_direction_;
-        JU::f32 	tw_force_strength_;
-        JU::f32		tw_scale_maxi_;
-        JU::f32 	tw_scale_mini_;
-        JU::f32     tw_FPS_;
+        TwBar* 		ptw_bar_;               //!< AnttweakBar handle
+        glm::vec3 	tw_force_direction_;    //!< Bubble's force direction
+        JU::f32 	tw_force_strength_;     //!< Bubble's force strength
+        JU::f32		tw_scale_maxi_;         //!< Bubble's maxi's scale
+        JU::f32 	tw_scale_mini_;         //!< Bubble's mini's scale
+        JU::f32     tw_FPS_;                //!< Application's FPS
+        JU::f32     tw_FOV_;                //!< Camera's FOV
 #endif
 };
 

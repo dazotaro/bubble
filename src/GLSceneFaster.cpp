@@ -40,7 +40,7 @@ GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height)
 									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(2)
 #ifdef _DEBUG
                                      , ptw_bar_(nullptr), tw_force_direction_(glm::vec3(0.0f, 0.0f, 1.0f)), tw_force_strength_(1.5f),
-									 tw_scale_maxi_(1.0f), tw_scale_mini_(0.2f), tw_FPS_(0.0f)
+									 tw_scale_maxi_(1.0f), tw_scale_mini_(0.2f), tw_FPS_(0.0f), tw_FOV_(120.0f)
 #endif
 {
 	computeSceneSize(width, height);
@@ -332,7 +332,7 @@ void GLSceneFaster::initializeObjects()
 
 void GLSceneFaster::initializeCameras()
 {
-    tp_camera_ = new JU::CameraThirdPerson(JU::CameraIntrinsic(90.f, scene_width_/(JU::f32)scene_height_, 0.5f, 1000.f),
+    tp_camera_ = new JU::CameraThirdPerson(JU::CameraIntrinsic(120.f * M_PI / 180.0f, scene_width_/(JU::f32)scene_height_, 0.5f, 1000.f),
     								   	   static_cast<JU::Transform3D>(*main_node_iter->second),
 										   3.0f, 0.0f, M_PI / 4.0f);
 }
@@ -461,10 +461,12 @@ void GLSceneFaster::initAntTweakBar()
 
     TwAddVarRO(ptw_bar_, "FrameRate", TW_TYPE_FLOAT, &tw_FPS_,
                " group ='Statistics' label='FPS' ");
+    TwAddVarRW(ptw_bar_, "FOV", TW_TYPE_FLOAT, &tw_FOV_,
+               " group ='Camera' min=45.0 max=120.0 step=1.0 label='FOY' help='Vertical field-of-view of the camera (in degrees).' ");
     TwAddVarRW(ptw_bar_, "MaxiScale", TW_TYPE_FLOAT, &tw_scale_maxi_,
-               " group ='Bubble' min=1.0 max=10.0 step=0.2 label='Maxi scale' help='Change the scale of the Bubbles maxi.' ");
+               " group ='Bubble' min=1.0 max=10.0 step=0.2 label='Maxi scale' help='Change the scale of the Bubble's maxi.' ");
     TwAddVarRW(ptw_bar_, "MiniScale", TW_TYPE_FLOAT, &tw_scale_mini_,
-               " group ='Bubble' min=0.5 max=10.0 step=0.1 label='Mini scale' help='Change the scale of the Bubbles mini.' ");
+               " group ='Bubble' min=0.5 max=10.0 step=0.1 label='Mini scale' help='Change the scale of the Bubble's mini.' ");
     TwAddVarRW(ptw_bar_, "ForceDir", TW_TYPE_DIR3F, &tw_force_direction_,
                " group ='Bubble' label='ForceDir' help='Change the force direction.' ");
     TwAddVarRW(ptw_bar_, "ForceStrength", TW_TYPE_FLOAT, &tw_force_strength_,
@@ -570,6 +572,10 @@ void GLSceneFaster::updateCamera(JU::uint32 time)
         axis = glm::vec3(tp_camera_->getTransformToParent() * glm::vec4(-axis, 0.0f));
         main_node_iter->second->rotate(angle, axis);
     }
+
+#ifdef _DEBUG
+    tp_camera_->intrinsic_.setVerticalFOY(tw_FOV_ * M_PI / 180.0f);
+#endif
 
 }
 
