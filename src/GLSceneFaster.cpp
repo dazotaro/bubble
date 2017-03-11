@@ -15,7 +15,6 @@
 #include <graphics/GLMesh.hpp>               // GLMesh
 #include <graphics/GLMeshInstance.hpp>       // GLMeshInstance
 #include <graphics/Node3D.hpp>               // Node3D
-#include <graphics/CameraInterface.hpp>      // CameraInterface
 #include <graphics/CameraFirstPerson.hpp>    // CameraFirstPerson
 #include <graphics/CameraThirdPerson.hpp>    // CameraThirdPerson
 #include <graphics/ShapeHelper2.hpp>         // build Mesh helper funtions
@@ -37,7 +36,7 @@ GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height)
 									 deferredFBO_(0), depthBuf_(0), posTex_(0), normTex_(0), colorTex_(0), shininessTex_(0),
 									 pass1Index_(0), pass2Index_(0), record_depth_(true),
 									 pbubble_(nullptr), plandscape_(nullptr),
-									 tp_camera_(nullptr), camera_(nullptr), control_camera_(true), camera_controller_(width, height, 0.2f),
+									 tp_camera_(nullptr), control_camera_(true), camera_controller_(width, height, 0.2f),
 									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(2)
 #ifdef _DEBUG
                                      , ptw_bar_(nullptr), tw_force_direction_(glm::vec3(0.0f, 0.0f, 1.0f)), tw_force_strength_(1.5f),
@@ -336,7 +335,6 @@ void GLSceneFaster::initializeCameras()
     tp_camera_ = new JU::CameraThirdPerson(JU::CameraIntrinsic(90.f, scene_width_/(JU::f32)scene_height_, 0.5f, 1000.f),
     								   	   static_cast<JU::Transform3D>(*main_node_iter->second),
 										   3.0f, 0.0f, M_PI / 4.0f);
-    camera_ = dynamic_cast<JU::CameraInterface *>(tp_camera_);
 }
 
 
@@ -801,7 +799,7 @@ void GLSceneFaster::renderPass1()
     // View matrix
     glm::mat4 V(tp_camera_->getViewMatrix());
     // Perspective Matrix
-    glm::mat4 P(tp_camera_->getPerspectiveMatrix());
+    glm::mat4 P(tp_camera_->intrinsic_.getPerspectiveMatrix());
     // Draw each object
     for (NodeMap::const_iterator iter = node_map_.begin(); iter != node_map_.end(); ++iter)
     {
@@ -1001,7 +999,7 @@ void GLSceneFaster::resize(int width, int height)
 	JU::GLScene::resize(width, height);
     computeSceneSize(width, height);
     gl::Viewport(0, 0, (GLsizei) scene_width_, (GLsizei) scene_height_);
-    camera_->setAspectRatio(static_cast<JU::f32>(scene_width_)/scene_height_);
+    tp_camera_->intrinsic_.setAspectRatio(static_cast<JU::f32>(scene_width_)/scene_height_);
     camera_controller_.windowResize(scene_width_, scene_height_);
 
 #ifdef _DEBUG

@@ -130,7 +130,6 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
 
         // CAMERA CONTROLS
         JU::CameraThirdPerson* tp_camera_;
-        JU::CameraInterface* camera_;
         bool control_camera_;
         JU::ArcBallController camera_controller_;
 
