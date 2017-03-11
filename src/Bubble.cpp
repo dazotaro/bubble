@@ -22,7 +22,7 @@ Bubble::Bubble(void) : pmesh_(nullptr), pmesh_instance_maxi_(nullptr), pmesh_ins
 						force_dir_(glm::vec3(0.0f, 0.0f, 0.0f)), force_mag_(0.0f)
 {
     // Mini's position in Maxi's coordinate system
-	mini_obj_.setPosition(glm::vec3(0.0f, 0.0f, 2.0f));
+	mini_obj_.setPosition(glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 

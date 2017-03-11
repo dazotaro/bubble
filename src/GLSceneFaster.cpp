@@ -40,8 +40,8 @@ GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height)
 									 tp_camera_(nullptr), camera_(nullptr), control_camera_(true), camera_controller_(width, height, 0.2f),
 									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(2)
 #ifdef _DEBUG
-                                     , ptw_bar_(nullptr), tw_force_direction_(glm::vec3(0.0f, 0.0f, 1.0f)), tw_force_strength_(5.0f),
-									 tw_scale_maxi_(5.0f), tw_scale_mini_(1.5f), tw_FPS_(0.0f)
+                                     , ptw_bar_(nullptr), tw_force_direction_(glm::vec3(0.0f, 0.0f, 1.0f)), tw_force_strength_(1.5f),
+									 tw_scale_maxi_(1.0f), tw_scale_mini_(0.2f), tw_FPS_(0.0f)
 #endif
 {
 	computeSceneSize(width, height);
@@ -232,7 +232,7 @@ void GLSceneFaster::initializeObjects()
     pbubble_ = new Bubble();
     pbubble_->init();
     // NODE: give the sphere a position and a orientation
-    JU::Transform3D bubble3d(glm::vec3(0.0f, 2.0f,  0.0f), // Model's position
+    JU::Transform3D bubble3d(glm::vec3(0.0f, 1.0f,  0.0f), // Model's position
                              glm::vec3(1.0f,  0.0f, 0.0f), // Model's X axis
                              glm::vec3(0.0f,  1.0f, 0.0f), // Model's Y axis
                              glm::vec3(0.0f,  0.0f, 1.0f));// Model's Z axis
@@ -252,7 +252,7 @@ void GLSceneFaster::initializeObjects()
         2, 2, 0, 0, 0, 0, 1, 3,
         1, 1, 0, 0, 0, 0, 1, 2
     };
-    glm::vec3 grid_scale(2.0f, 2.0f, 1.0f);  // Scale in the grid's local coordinate system (XY is the horizontal plane)
+    glm::vec3 grid_scale(1.0f, 1.0f, 1.0f);  // Scale in the grid's local coordinate system (XY is the horizontal plane)
     plandscape_ = new Landscape();
     plandscape_->init(land_data, num_rows, num_cols, grid_scale);
     // NODE: give the sphere a position and a orientation
@@ -335,7 +335,7 @@ void GLSceneFaster::initializeCameras()
 {
     tp_camera_ = new JU::CameraThirdPerson(JU::CameraIntrinsic(90.f, scene_width_/(JU::f32)scene_height_, 0.5f, 1000.f),
     								   	   static_cast<JU::Transform3D>(*main_node_iter->second),
-										   10.0f, 0.0f, M_PI / 4.0f);
+										   3.0f, 0.0f, M_PI / 4.0f);
     camera_ = dynamic_cast<JU::CameraInterface *>(tp_camera_);
 }
 
