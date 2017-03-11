@@ -42,7 +42,7 @@ GLSceneFaster::GLSceneFaster(int width, int height) : JU::GLScene(width, height)
 									 light_mode_(JU::LightManager::POSITIONAL), num_lights_(2)
 #ifdef _DEBUG
                                      , ptw_bar_(nullptr), tw_force_direction_(glm::vec3(0.0f, 0.0f, 1.0f)), tw_force_strength_(5.0f),
-									 tw_scale_maxi_(5.0f), tw_scale_mini_(1.5f)
+									 tw_scale_maxi_(5.0f), tw_scale_mini_(1.5f), tw_FPS_(0.0f)
 #endif
 {
 	computeSceneSize(width, height);
@@ -462,6 +462,8 @@ void GLSceneFaster::initAntTweakBar()
 	TwWindowSize(width_, height_);
 
 
+    TwAddVarRO(ptw_bar_, "FrameRate", TW_TYPE_FLOAT, &tw_FPS_,
+               " group ='Statistics' label='FPS' ");
     TwAddVarRW(ptw_bar_, "MaxiScale", TW_TYPE_FLOAT, &tw_scale_maxi_,
                " group ='Bubble' min=1.0 max=10.0 step=0.2 label='Maxi scale' help='Change the scale of the Bubbles maxi.' ");
     TwAddVarRW(ptw_bar_, "MiniScale", TW_TYPE_FLOAT, &tw_scale_mini_,
@@ -706,8 +708,38 @@ void GLSceneFaster::update(JU::uint32 time)
 	updateCamera(time);
 	updateLights(time);
 	updateBubble(time);
+#ifdef _DEBUG
+	updateFPS(time);
+#endif
 }
 
+
+#ifdef _DEBUG
+/**
+* @brief Update the frame rate
+*
+* @param time Time elapsed since the last update (in milliseconds)
+*/
+void GLSceneFaster::updateFPS(JU::uint32 time)
+{
+    /* FPS ESTIMATION: START */
+    // FPS Calculation
+    static JU::uint32 time_for_fps = 0;
+    static JU::uint32 counted_frames = 0;
+    time_for_fps += time;
+    if (time_for_fps > 1000)
+    {
+        //Calculate and correct fps
+        tw_FPS_ = counted_frames  * 1000.0f / time_for_fps;
+
+        time_for_fps = 0;
+        counted_frames = 1;
+    }
+    else
+        counted_frames++;
+    /* FPS ESTIMATION: END */
+}
+#endif
 
 
 /**

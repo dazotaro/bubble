@@ -90,6 +90,10 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
         void updateSpotlightLights(JU::uint32 time);
 
         void updateBubble(JU::uint32 time);
+#ifdef _DEBUG
+        void updateFPS(JU::uint32 time);
+#endif
+
 
         void loadLights(void) const;
         void loadPositionalLights(void) const;
@@ -146,6 +150,7 @@ class GLSceneFaster: public JU::GLScene, public JU::SDLEventHandler
         JU::f32 	tw_force_strength_;
         JU::f32		tw_scale_maxi_;
         JU::f32 	tw_scale_mini_;
+        JU::f32     tw_FPS_;
 #endif
 };
 
