@@ -91,6 +91,31 @@ void Bubble::setScale(BubbleMember member_id, JU::f32 scale)
 * @brief Initialize the meshes needed for this object
 *
 */
+JU::f32 Bubble::getScale (BubbleMember member_id) const
+{
+    JU::f32 scale;
+
+    switch(member_id)
+    {
+        case MAXI:
+            scale = maxi_scale_;
+            break;
+
+        case MINI:
+            scale = mini_scale_;
+            break;
+
+        default:
+            std::exit(EXIT_FAILURE);
+
+    }
+}
+
+
+/**
+* @brief Initialize the meshes needed for this object
+*
+*/
 void Bubble::initMeshes(void)
 {
 	// SPHERE (to be used for maxi an mini)

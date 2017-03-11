@@ -41,6 +41,7 @@ class Bubble : public JU::DrawInterface
 	public:
         void update(const glm::vec3& direction, const JU::f32 distance);
         void setScale (BubbleMember member_id, JU::f32 scale);
+        JU::f32 getScale (BubbleMember member_id) const;
 
 	private:
         void initMeshes(void);
