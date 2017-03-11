@@ -49,8 +49,6 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.137363961" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.2039006826" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option id="gnu.cpp.link.option.paths.1742311580" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/peaworm/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/rocket/Debug}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/toyRocket/Debug}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.284369516" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
