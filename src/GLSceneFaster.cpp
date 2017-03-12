@@ -23,6 +23,7 @@
 #include <graphics/DebugGlm.hpp>             // debug::print
 #include <graphics/GLSLProgramExt.hpp>		 // GLSLProgramExt::setUniform
 #include <graphics/MeshImporter.hpp>         // MeshImporter (Assimp)
+#include <collision/BoundingVolumes.hpp>     // BoundingSphere
 #include <core/Transform3D.hpp>     		 // Transform3D
 #include <core/Singleton.hpp>				 // JU::Singleton
 #include <core/Keyboard.hpp>                 // JU::Keyboard
@@ -667,6 +668,13 @@ void GLSceneFaster::updateSpotlightLights(JU::uint32 time)
 */
 void GLSceneFaster::updateBubble(JU::uint32 time)
 {
+#ifdef _DEBUG
+    // ANTWEAKBAR
+    pbubble_->setScale(Bubble::MAXI, tw_scale_maxi_);
+    pbubble_->setScale(Bubble::MINI, tw_scale_mini_);
+    pbubble_->update(tw_force_direction_, tw_force_strength_);
+#endif
+
     // Update bubble's position
     static JU::Keyboard* pkeyboard = JU::Singleton<JU::Keyboard>::getInstance();
     if (pkeyboard->isKeyDown(SDL_SCANCODE_UP))
@@ -682,7 +690,10 @@ void GLSceneFaster::updateBubble(JU::uint32 time)
         {
             std::exit(EXIT_FAILURE);
         }
-        if (plandscape_->isCollidingWithSphere(pnode_bubble->getPosition() - pnode_grid->getPosition(), pbubble_->getScale(Bubble::MAXI)))
+        // Convert the Bubble to the grid's coordinate system
+        glm::mat4 gridInvModel(node_map_["landscape"]->getTransformFromParent());
+        glm::vec3 bubbleInGrid(gridInvModel * glm::vec4(pnode_bubble->getPosition(), 1.0f));
+        if (plandscape_->isColliding(JU::BoundingSphere(bubbleInGrid, pbubble_->getScale(Bubble::MAXI) * 0.5f)))
             pnode_bubble->translate(-forward * 0.1f);
 
     }
@@ -700,13 +711,6 @@ void GLSceneFaster::updateBubble(JU::uint32 time)
 
         bubble->rotateY(-M_PI/180.0f);
     }
-
-#ifdef _DEBUG
-    // ANTWEAKBAR
-	pbubble_->setScale(Bubble::MAXI, tw_scale_maxi_);
-	pbubble_->setScale(Bubble::MINI, tw_scale_mini_);
-	pbubble_->update(tw_force_direction_, tw_force_strength_);
-#endif
 }
 
 

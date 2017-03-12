@@ -8,10 +8,16 @@
 // Local includes
 #include "Landscape.hpp"
 // Global includes
-#include <graphics/Material.hpp>        // Material
-#include <graphics/ShapeHelper2.hpp>    // build Mesh helper funtions
-#include <cstring>                      // std::memcpy
-#include <glm/gtx/transform.hpp>        // scale
+#include <graphics/Material.hpp>            // Material
+#include <graphics/ShapeHelper2.hpp>        // build Mesh helper funtions
+#include <collision/BoundingVolumes.hpp>    // BoundingSphere
+#include <collision/Intersection.hpp>       // testSphereBox
+#include <cstring>                          // std::memcpy
+#include <glm/gtx/transform.hpp>            // scale
+#include <cfloat>                           // numeric limits
+#ifdef _DEBUG
+    #include <graphics/DebugGlm.hpp>            // printVec3
+#endif
 
 /**
 * @brief Default Constructor
@@ -65,11 +71,35 @@ void Landscape::init(const BlockInfo* pblock, const JU::uint32 num_rows, const J
     if (is_initialized_)
         release();
 
+    scale_ = scale;
+
     // Initialize the Grid structure
     num_rows_ = num_rows;
     num_cols_ = num_cols;
+    // Allocate storage for the landscape
     pblock_ = new BlockInfo[num_rows * num_cols];
-    std::memcpy(pblock_, pblock, num_rows * num_cols * sizeof(pblock[0]));
+    glm::f32 min_height(FLT_MAX), max_height(FLT_MIN);
+    for (glm::uint32 row = 0; row < num_rows; row++)
+    {
+        for (glm::uint32 col = 0; col < num_cols; col++)
+        {
+            glm::uint32 index = row * num_cols + col;
+            pblock_[index] = pblock[index];
+            if (pblock_[index].height_ < min_height)
+                min_height = pblock_[index].height_;
+            if (pblock_[index].height_ > max_height)
+                max_height = pblock_[index].height_;
+        }
+    }
+
+    // Init bounding box
+    box_.pmin_.x = 0.0f;
+    box_.pmin_.y = 0.0f;
+    box_.pmin_.z = min_height;
+    box_.pmax_.x = num_cols_ * scale_.x;
+    box_.pmax_.y = num_rows_ * scale_.y;
+    box_.pmax_.z = max_height;
+
 
     // Initialize OpenGL stuff
     JU::Mesh2 mesh;
@@ -80,97 +110,128 @@ void Landscape::init(const BlockInfo* pblock, const JU::uint32 num_rows, const J
     pmesh_instance_ = new JU::GLMeshInstance(pmesh_, 1.0f, 1.0f, 1.0f, JU::MaterialManager::getMaterial("yellow_rubber"));
     pmesh_instance_->addColorTexture("pool");
 
-    scale_ = scale;
-
-    is_initialized_ = true;
+     is_initialized_ = true;
 }
 
 
 /**
 * @brief Is the sphere colliding with the Grid
 *
-* @param position   Coordinates of the center of the sphere respect to the grid's origin
-* @param radius     Radius of the sphere
+* @param sphere Bounding sphere to test against
+*               (center of the sphere is in the Landscape's local coordinate system)
+*
 * @return True if colliding, false otherwise
 */
-bool Landscape::isCollidingWithSphere(glm::vec3 position, JU::f32 radius) const
+bool Landscape::isColliding(const JU::BoundingSphere& sphere) const
 {
-    const JU::uint32 col = std::floor(position.x / scale_.x);
-    const JU::uint32 row = -std::floor(position.z / scale_.y);
+    if (!JU::testSphereBox(sphere, box_))
+        return false;
 
-    std::printf("Position (%f, %f)\n", position.x, -position.z);
-    std::printf("Row, column = %i, %i\n", row, col);
-
-    const JU::int32 last_cell = num_rows_ * num_cols_ - 1;
-    const JU::int32 center_cell = row * num_cols_ + col;        // Index of cell containing the center of the object
-
-    const JU::f32 offsetX = - position.x - (col * scale_.x);
-    const JU::f32 offsetY = - position.z - (row * scale_.y);
-
-    // No collision if outside of the grid's bounds
-    if (row >= 0 && row < num_rows_ && col >= 0 && col < num_cols_)
+    for (glm::uint32 row = 0; row < num_rows_; row++)
     {
-        // Center cell
-        if (pblock_[center_cell].height_)
-        return true;
-
-        // overlapping?
-        bool north = false;
-        bool south = false;
-        bool east  = false;
-        bool west  = false;
-
-        // NORTH
-        const JU::int32 north_cell = center_cell + num_cols_;
-        if (north_cell <= last_cell && (scale_.y - offsetY) < radius)
+        for (glm::uint32 col = 0; col < num_cols_; col++)
         {
-            north = true;
-            if (pblock_[north_cell].height_)
-                return true;
-        }
-        // EAST
-        const JU::int32 east_cell = center_cell + 1;
-        if (east_cell <= last_cell && (scale_.x - offsetX) < radius)
-        {
-            east = true;
-            if (pblock_[east_cell].height_)
-                return true;
-        }
-        // SOUTH
-        const JU::int32 south_cell = center_cell - num_cols_;
-        if (south_cell >= 0 && offsetY < radius)
-        {
-            south = true;
-            if (pblock_[south_cell].height_)
-                return true;
-        }
-        // WEST
-        const JU::int32 west_cell = center_cell - 1;
-        if (west_cell >= 0 && offsetX < radius)
-        {
-            west = true;
-            if (pblock_[west_cell].height_)
-                return true;
-        }
+            if (pblock_[row*num_cols_+col].height_)
+            {
+                glm::vec3 pmin(      col * scale_.x,       row * scale_.y,                               0.0f);
+                glm::vec3 pmax((col + 1) * scale_.x, (row + 1) * scale_.y, pblock_[row*num_cols_+col].height_);
 
-
-        // NORTH-EAST
-        if (north && east && pblock_[center_cell + num_cols_ + 1].height_)
-            return true;
-        // NORTH-WEST
-        if (north && west && pblock_[center_cell + num_cols_ - 1].height_)
-            return true;
-        // SOUTH-EAST
-        if (south && east && pblock_[center_cell - num_cols_ + 1].height_)
-            return true;
-        // SOUTH-WEST
-        if (south && west && pblock_[center_cell - num_cols_ - 1].height_)
-            return true;
+                JU::BoundingBox block(glm::vec3(      col * scale_.x,       row * scale_.y,                               0.0f),
+                                      glm::vec3((col + 1) * scale_.x, (row + 1) * scale_.y, pblock_[row*num_cols_+col].height_));
+                if (JU::testSphereBox(sphere, block))
+                    return true;
+            }
+        }
     }
 
     return false;
 }
 
+
+/*
+ * \todo Improve the brute-force solution
+ * bool Landscape::isColliding(const JU::BoundingSphere& sphere) const
+{
+    std::printf("Position (%f, %f)\n", sphere.center_.x, sphere.center_.z);
+
+    if (!JU::testSphereBox(sphere, box_))
+    {
+        std::printf("Early out!\n");
+        return false;
+    }
+
+    const JU::uint32 col =  std::floor(sphere.center_.x / scale_.x);
+    const JU::uint32 row =  std::floor(sphere.center_.z / scale_.y);
+    const JU::uint32 row2 = -sphere.center_.z / scale_.y;
+
+    std::printf("Row, column = %i, %i (row2 = %i)\n", row, col, row2);
+
+    const JU::int32 last_cell = num_rows_ * num_cols_ - 1;
+    const JU::int32 center_cell = row * num_cols_ + col;        // Index of cell containing the center of the object
+
+    const JU::f32 offsetX = - sphere.center_.x - (col * scale_.x);
+    const JU::f32 offsetY = - sphere.center_.z - (row * scale_.y);
+
+    // Center cell
+    if (pblock_[center_cell].height_)
+    return true;
+
+    // overlapping?
+    bool north = false;
+    bool south = false;
+    bool east  = false;
+    bool west  = false;
+
+    // NORTH
+    const JU::int32 north_cell = center_cell + num_cols_;
+    if (north_cell <= last_cell && (scale_.y - offsetY) < sphere.radius_)
+    {
+        north = true;
+        if (pblock_[north_cell].height_)
+            return true;
+    }
+    // EAST
+    const JU::int32 east_cell = center_cell + 1;
+    if (east_cell <= last_cell && (scale_.x - offsetX) < sphere.radius_)
+    {
+        east = true;
+        if (pblock_[east_cell].height_)
+            return true;
+    }
+    // SOUTH
+    const JU::int32 south_cell = center_cell - num_cols_;
+    if (south_cell >= 0 && offsetY < sphere.radius_)
+    {
+        south = true;
+        if (pblock_[south_cell].height_)
+            return true;
+    }
+    // WEST
+    const JU::int32 west_cell = center_cell - 1;
+    if (west_cell >= 0 && offsetX < sphere.radius_)
+    {
+        west = true;
+        if (pblock_[west_cell].height_)
+            return true;
+    }
+
+
+    // NORTH-EAST
+    if (north && east && pblock_[center_cell + num_cols_ + 1].height_)
+        return true;
+    // NORTH-WEST
+    if (north && west && pblock_[center_cell + num_cols_ - 1].height_)
+        return true;
+    // SOUTH-EAST
+    if (south && east && pblock_[center_cell - num_cols_ + 1].height_)
+        return true;
+    // SOUTH-WEST
+    if (south && west && pblock_[center_cell - num_cols_ - 1].height_)
+        return true;
+
+    return false;
+}
+*/
 
 /**
 * @brief Draw function
@@ -192,8 +253,8 @@ void Landscape::draw(const JU::GLSLProgram &program, const glm::mat4 & model, co
             JU::uint32 height = pblock_[row * num_cols_ + col].height_;
             if (height > 0)
             {
-                // Translate this block (we only add half the height because the position of the object is at the center
-                glm::mat4 trans_mat = glm::translate(glm::mat4(), glm::vec3(col, row, 0.5f));
+                // Translate this block (we only add half the height because the position of the object is at the center)
+                glm::mat4 trans_mat = glm::translate(glm::mat4(), glm::vec3(col + 0.5f, row + 0.5f, 0.5f));
                 glm::mat4 block_scale = glm::scale(glm::mat4(), glm::vec3(scale_.x, scale_.y, height));
                 pmesh_instance_->draw(program, model * block_scale * trans_mat, view, projection);
             }

@@ -9,10 +9,11 @@
 #define LANDSCAPE_HPP_
 
 // Global includes
-#include <core/Transform3D.hpp>         // Transform3D
-#include <graphics/DrawInterface.hpp>   // DrawInterface
-#include <graphics/GLMesh.hpp>          // GLMesh
-#include <graphics/GLMeshInstance.hpp>  // GLMeshInstance
+#include <core/Transform3D.hpp>             // Transform3D
+#include <graphics/DrawInterface.hpp>       // DrawInterface
+#include <graphics/GLMesh.hpp>              // GLMesh
+#include <graphics/GLMeshInstance.hpp>      // GLMeshInstance
+#include <collision/BoundingVolumes.hpp>    // BoundingSphere, BoundingBox
 
 
 
@@ -31,7 +32,7 @@ class Landscape : public JU::DrawInterface
         Landscape();
         virtual ~Landscape();
         void init(const BlockInfo* pblock, const JU::uint32 num_rows, const JU::uint32 num_cols, const glm::vec3& scale);
-        bool isCollidingWithSphere(glm::vec3 position, JU::f32 radius) const;
+        bool isColliding(const JU::BoundingSphere& sphere) const;
 
     //DrawInterface
     public:
@@ -46,10 +47,11 @@ class Landscape : public JU::DrawInterface
         JU::GLMesh*         pmesh_;            //!< Mesh to be drawn
         JU::GLMeshInstance* pmesh_instance_;   //!< Mesh Instance
         // Lanscape of blocks
-        BlockInfo* pblock_;     //!< Grid data
-        JU::uint32 num_rows_;   //!< Number of rows
-        JU::uint32 num_cols_;   //!< Number of columns
-        glm::vec3  scale_;      //!< Scale parameters
+        BlockInfo*      pblock_;    //!< Grid data
+        JU::uint32      num_rows_;  //!< Number of rows
+        JU::uint32      num_cols_;  //!< Number of columns
+        glm::vec3       scale_;     //!< Scale parameters
+        JU::BoundingBox box_;       //!< BoundingBox of the whole landscape
 };
 
 #endif /* LANDSCAPE_HPP_ */
