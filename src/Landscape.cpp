@@ -121,6 +121,9 @@ void Landscape::init(const BlockInfo* pblock, const JU::uint32 num_rows, const J
 *               (center of the sphere is in the Landscape's local coordinate system)
 *
 * @return True if colliding, false otherwise
+*
+* \todo This is the dumb brute-force (check all cells in the grid) approach. Upgrade it
+* so it uses a spatial data structure (uniform/hierarchical grids, octree)
 */
 bool Landscape::isColliding(const JU::BoundingSphere& sphere) const
 {
