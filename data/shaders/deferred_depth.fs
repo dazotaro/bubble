@@ -140,6 +140,15 @@ float getSobelSquaredValue()
 }
 
 
+vec3 checkerboard(vec2 tex, out float shininess)
+{
+    float value = mod(floor(10.f * tex.s) + floor (10.f * tex.t), 2.0);
+        
+    shininess = 1.0;
+    
+    return vec3(value, value, value);
+}
+
 
 subroutine (RenderPassType)
 void pass1()
@@ -147,9 +156,12 @@ void pass1()
     // Store position, normal and diffuse color in g-buffer
     PositionData = Position_eye;
     NormalData   = Normal_eye;
-    ColorData    = material.Kd;
-    ShininessData	= material.shininess;
-    
+    //ColorData    = material.Kd;
+    float shininess = 0.0f;
+    ColorData    = checkerboard(TexCoord, shininess);
+    ShininessData   = shininess;
+    //ShininessData   = material.shininess;
+        
     //FragColor = vec4(0.8f, 0.0f, 0.0f, 1.0f);
 }
 
