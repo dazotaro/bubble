@@ -675,6 +675,9 @@ void GLSceneFaster::updateBubble(JU::uint32 time)
     pbubble_->update(tw_force_direction_, tw_force_strength_);
 #endif
 
+    static const glm::f32 speed = 0.01f;                         // units per millisecond
+    static const glm::f32 angular_speed = M_PI * 0.4f * 0.001f; // radians per millisecond
+
     // Update bubble's position
     static JU::Keyboard* pkeyboard = JU::Singleton<JU::Keyboard>::getInstance();
     if (pkeyboard->isKeyDown(SDL_SCANCODE_UP))
@@ -682,7 +685,8 @@ void GLSceneFaster::updateBubble(JU::uint32 time)
         JU::Node3D* pnode_bubble = node_map_["bubble"];
 
         glm::vec3 forward(-pnode_bubble->getZAxis());
-        pnode_bubble->translate(forward * 0.1f);
+        glm::vec3 translate = forward * (speed * time);
+        pnode_bubble->translate(translate);
 
         // Collision with landscape?
         JU::Node3D* pnode_grid= node_map_["landscape"];
@@ -694,7 +698,7 @@ void GLSceneFaster::updateBubble(JU::uint32 time)
         glm::mat4 gridInvModel(node_map_["landscape"]->getTransformFromParent());
         glm::vec3 bubbleInGrid(gridInvModel * glm::vec4(pnode_bubble->getPosition(), 1.0f));
         if (plandscape_->isColliding(JU::BoundingSphere(bubbleInGrid, pbubble_->getScale(Bubble::MAXI) * 0.5f)))
-            pnode_bubble->translate(-forward * 0.1f);
+            pnode_bubble->translate(-translate);
 
     }
 
@@ -702,14 +706,13 @@ void GLSceneFaster::updateBubble(JU::uint32 time)
     {
         auto bubble = node_map_["bubble"];
 
-        bubble->rotateY(M_PI/180.0f);
+        bubble->rotateY(angular_speed * time);
     }
-
-    if (pkeyboard->isKeyDown(SDL_SCANCODE_RIGHT))
+    else if (pkeyboard->isKeyDown(SDL_SCANCODE_RIGHT))
     {
         auto bubble = node_map_["bubble"];
 
-        bubble->rotateY(-M_PI/180.0f);
+        bubble->rotateY(-angular_speed * time);
     }
 }
 
