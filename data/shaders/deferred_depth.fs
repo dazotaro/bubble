@@ -36,6 +36,9 @@ uniform Material material;
 subroutine void RenderPassType();
 subroutine uniform RenderPassType RenderPass;
 
+// Incoming texture for this object
+uniform sampler2D ColorTex0;
+
 // The G-buffer textures
 uniform sampler2D PositionTex, NormalTex, ColorTex, ShininessTex, DepthTex;
 
@@ -157,10 +160,13 @@ void pass1()
     PositionData = Position_eye;
     NormalData   = Normal_eye;
     //ColorData    = material.Kd;
+    //ShininessData   = material.shininess;
+    ColorData = texture(ColorTex0, TexCoord).xyz;
+    /* proceduraly generated texture
     float shininess = 0.0f;
     ColorData    = checkerboard(TexCoord, shininess);
     ShininessData   = shininess;
-    //ShininessData   = material.shininess;
+    */
         
     //FragColor = vec4(0.8f, 0.0f, 0.0f, 1.0f);
 }
