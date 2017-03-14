@@ -212,9 +212,7 @@ void GLSceneFaster::initializeFBO()
 
 void GLSceneFaster::initializeTextures()
 {
-    JU::TextureManager::loadTexture("test",  "data/textures/test.tga");
-    JU::TextureManager::loadTexture("brick", "data/textures/brick1.jpg");
-    JU::TextureManager::loadTexture("pool",  "data/textures/pool.png");
+    JU::TextureManager::loadTexture("checkerboard", "data/textures/checkerboard.png");
     JU::TextureManager::loadTexture("light", "data/textures/light_texture.tga");
 }
 
@@ -247,12 +245,12 @@ void GLSceneFaster::initializeObjects()
     const JU::uint32 num_cols = 8;
     Landscape::BlockInfo land_data[num_rows * num_cols] =
     {
-        4, 1, 0, 0, 0, 0, 1, 5,
-        3, 2, 0, 0, 0, 0, 1, 4,
-        2, 2, 0, 0, 0, 0, 1, 3,
-        1, 1, 0, 0, 0, 0, 1, 2
+        4, 1, 7, 0, 10, 5, 1, 5,
+        3, 2, 0, 0,  1, 0, 0, 4,
+        2, 2, 0, 0,  1, 2, 0, 3,
+        1, 0, 0, 1,  1, 0, 1, 2
     };
-    glm::vec3 grid_scale(1.0f, 1.0f, 1.0f);  // Scale in the grid's local coordinate system (XY is the horizontal plane)
+    glm::vec3 grid_scale(3.0f, 3.0f, 1.0f);  // Scale in the grid's local coordinate system (XY is the horizontal plane)
     plandscape_ = new Landscape();
     plandscape_->init(land_data, num_rows, num_cols, grid_scale);
     // NODE: give the sphere a position and a orientation
@@ -286,8 +284,9 @@ void GLSceneFaster::initializeObjects()
     // MESH INSTANCE
     glm::vec3 scale(50.0f, 50.0f, 1.0f);
     pmesh_instance = new JU::GLMeshInstance(pmesh, scale.x, scale.y, scale.z, JU::MaterialManager::getMaterial("gray_rubber"));
-    pmesh_instance->addColorTexture("brick");
+    pmesh_instance->addColorTexture("checkerboard");
     mesh_instance_map_["plane_green"] = pmesh_instance;
+
     // NODE
     // Give the plane a position and a orientation
     JU::Transform3D plane(glm::vec3(0.0f, 0.0f, 0.0f), // Model's position
