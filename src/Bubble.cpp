@@ -7,7 +7,8 @@
 
 // Global include
 #include <graphics/Material.hpp>		// Material
-#include <graphics/ShapeHelper2.hpp>         // build Mesh helper funtions
+#include <graphics/ShapeHelper2.hpp>    // build Mesh helper funtions
+#include <graphics/TextureManager.hpp>  // JU::TextureManager
 
 // Local include
 #include "Bubble.hpp"					// Bubble
@@ -120,6 +121,8 @@ JU::f32 Bubble::getScale (BubbleMember member_id) const
 */
 void Bubble::initMeshes(void)
 {
+    JU::TextureManager::loadTexture("pool",  "data/textures/pool.png");
+
 	// SPHERE (to be used for maxi an mini)
 	// ------
 	// MESH

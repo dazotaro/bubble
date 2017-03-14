@@ -10,6 +10,7 @@
 // Global includes
 #include <graphics/Material.hpp>            // Material
 #include <graphics/ShapeHelper2.hpp>        // build Mesh helper funtions
+#include <graphics/TextureManager.hpp>      // TextureManager
 #include <collision/BoundingVolumes.hpp>    // BoundingSphere
 #include <collision/Intersection.hpp>       // testSphereBox
 #include <cstring>                          // std::memcpy
@@ -102,13 +103,15 @@ void Landscape::init(const BlockInfo* pblock, const JU::uint32 num_rows, const J
 
 
     // Initialize OpenGL stuff
+    JU::TextureManager::loadTexture("arrow",  "data/textures/arrow512.png");
+
     JU::Mesh2 mesh;
     JU::ShapeHelper2::buildMesh(mesh, JU::ShapeHelper2::CUBE);
     pmesh_ = new JU::GLMesh();
     // Load the Mesh into VBO and VAO
     pmesh_->init(mesh);
     pmesh_instance_ = new JU::GLMeshInstance(pmesh_, 1.0f, 1.0f, 1.0f, JU::MaterialManager::getMaterial("yellow_rubber"));
-    pmesh_instance_->addColorTexture("pool");
+    pmesh_instance_->addColorTexture("arrow");
 
      is_initialized_ = true;
 }
