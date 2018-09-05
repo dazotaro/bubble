@@ -14,6 +14,7 @@
 #include <collision/BoundingVolumes.hpp>    // BoundingSphere
 #include <collision/Intersection.hpp>       // testSphereBox
 #include <cstring>                          // std::memcpy
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp>            // scale
 #include <cfloat>                           // numeric limits
 #ifdef _DEBUG
