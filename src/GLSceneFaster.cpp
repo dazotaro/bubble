@@ -28,6 +28,7 @@
 #include <core/Singleton.hpp>				 // JU::Singleton
 #include <core/Keyboard.hpp>                 // JU::Keyboard
 #include <core/SystemLog.hpp>				 // JU::SystemLog
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp>			 // glm::rotate
 #include <math.h>							 // M_PI
 
@@ -807,7 +808,7 @@ void GLSceneFaster::renderPass1()
     gl::UniformSubroutinesuiv(gl::FRAGMENT_SHADER, 1, &pass1Index_);
 
     // Model Matrix
-    static glm::mat4 M(1.0f);
+    static const glm::mat4 M(1.0f);
     // View matrix
     glm::mat4 V(tp_camera_->getViewMatrix());
     // Perspective Matrix
@@ -954,7 +955,7 @@ void GLSceneFaster::handleSDLEvent(const SDL_Event* event)
 		{
 			case SDL_WINDOWEVENT:
 			    if (event->window.event == SDL_WINDOWEVENT_RESIZED)
-				resize(event->window.data1, event->window.data2);
+			    	resize(event->window.data1, event->window.data2);
 				break;
 
 			case SDL_MOUSEMOTION:
