@@ -4,8 +4,8 @@
 #include <cstdlib>                      // EXIT_SUCCESS
 //#include <GL/freeglut.h>                // GLUT
 #ifndef WIN32
-    #include <JU/Timer.hpp>             // Timer
-    #include <JU/FrameRateTracker.hpp>  // FrameRateTracker
+//    #include <JU/Timer.hpp>             // Timer
+//    #include <JU/FrameRateTracker.hpp>  // FrameRateTracker
 #endif
 
 #include <core/GameManager.hpp>			// JU::GameManager
